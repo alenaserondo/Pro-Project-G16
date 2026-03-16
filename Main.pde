@@ -118,22 +118,27 @@ void draw()
  //Screens - Alyx Harmon
   currentScreen.draw();
 
-int x = 100;
-  int y = 200;
-  text("flight data :", 50,100);
-  text("airline : ", 50, 200);
-  text("Time : ", 50, 300);
-  text("status : ", 50, 500);
+ int x = 100;
+  int y = 250;
+  text("flight data :", 100,100);
+  text("airline", 100, 150);
+  text("Dept Time", 200, 150);
+  text("Sch Time", 300, 150);
+  text("status", 400, 150);
    for(Flights flight : flights) //loops through the objects 
   {
     // prints data to the console
     
     fill(0);
-    text(flight.airline , x,y);
-    text(flight.depTime, x,300);
-    text(flight.schDepTime, x,400);
-    text(flight.status, x,500);
-    x += 100;
+    text(flight.airline ,x,y);
+    x +=100;
+    text(flight.depTime, x,y);
+    x +=100;
+    text(flight.schDepTime, x,y);
+    x +=100;
+    text(flight.status, x,y);
+    x = 100;
+    y += 100;
     
   }
    
