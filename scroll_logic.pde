@@ -24,7 +24,7 @@ void draw() {
   hs.update();
   hs.display();
 
-  // ✅ Correct scroll percentage (0 → 1)
+  // Correct scroll percentage (0 → 1)
   float scrollPercent = hs.getPercent();
 
   int maxStart = items.length - visibleCount;
@@ -71,7 +71,7 @@ class HScrollbar {
     sposMin = xpos;
     sposMax = xpos + swidth - sheight;
 
-    spos = sposMin;   // ✅ start at far left
+    spos = sposMin;   //  start at far left
     newspos = spos;
 
     loose = l;
@@ -118,7 +118,7 @@ class HScrollbar {
     rect(spos, ypos, sheight, sheight);
   }
 
-  // ✅ Returns value between 0 and 1
+  // Returns value between 0 and 1
   float getPercent() {
     return (spos - sposMin) / (sposMax - sposMin);
   }
