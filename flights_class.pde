@@ -3,6 +3,7 @@
 class Flights  
 {
   String date;
+  int dateInt;
   String airline;
   int schDepTime;
   int depTime;
@@ -20,6 +21,9 @@ class Flights
     this.schDepTime = schDepTime;
     this.airline = airline;
     //this.arrTime = arrTime;
+    
+    // convert date into int format MMDDYYYY
+    dateInt = int(date.replace("/",""));
   }
   
   // Updated booleans to be boolean functions - China Lynch 10/3/26 7pm
@@ -38,6 +42,12 @@ class Flights
   boolean late()
   {
     return (depTime > schDepTime);
+  }
+  
+  // Checks if flight is in range of dates user gives
+  boolean inRange(int startDate, int endDate)
+  {
+    return (dateInt >= startDate && dateInt <= endDate)
   }
 
 // Updated draw method to display flight status - China Lynch 18/3/26 8:11pm
@@ -64,4 +74,3 @@ class Flights
   }
   
 }
-
