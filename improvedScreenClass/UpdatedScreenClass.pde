@@ -1,5 +1,40 @@
-// Alyx Harmon 16/3 15.30pm - created subclasses for each screen & improved visuals
-class HomeScreen extends Screen
+// Alyx Harmon - screen & button classes
+class Screen
+{
+  ArrayList<Button> widgets;
+  color bgColor;
+  
+  Screen(color bgColor)
+  {
+    this.bgColor = bgColor;
+    widgets = new ArrayList<Button>();
+  }
+  
+  void addWidget(Button b)
+  {
+    widgets.add(b);
+  }
+  
+  void draw()
+  {
+    background(bgColor);
+    
+    for (Button b : widgets)
+      b.draw();
+  }
+  
+  Button getButton(int mx, int my)
+  {
+    for (Button b: widgets)
+    {
+      if (b.isClicked(mx,my))
+      return b;
+    }
+    return null;
+  }
+}
+/////////////////////////////////////////////////////////////////////////////////////
+class HomeScreen extends Screen // Alyx Harmon 16/3 15.30pm - added subclasses for each screen
 {
   HomeScreen(color c)
   {
@@ -83,57 +118,42 @@ class FlightScreen extends Screen
   }
 }
   
-void draw()
-{
-  currentScreen.draw();
-}
 
-void mousePressed()
-{
-  Button b = currentScreen.getButton(mouseX, mouseY);
-  
-  if(b != null)
-  {
-    if (b.label.equals("Go to Map"))
-      currentScreen = screens.get(1);
-    else if (b.label.equals("Find Flights"))
-      currentScreen = screens.get(2);
-    else if (b.label.equals("Back to Home"))
-      currentScreen = screens.get(0);
-  }
-}
 
-class Screen
+
+////////////////////////////////////////////////////////
+//Alyx
+class Button
 {
-  ArrayList<Button> widgets;
-  color bgColor;
+  int x,y,w,h;
+  String label;
   
-  Screen(color bgColor)
+  Button(int x, int y, int w, int h, String label)
   {
-    this.bgColor = bgColor;
-    widgets = new ArrayList<Button>();
-  }
-  
-  void addWidget(Button b)
-  {
-    widgets.add(b);
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.label = label;
   }
   
   void draw()
   {
-    background(bgColor);
+    noStroke();
+    fill(255);
+    rect(x,y,w,h);
     
-    for (Button b : widgets)
-      b.draw();
+    fill(0);
+    textAlign(CENTER, CENTER);
+    textSize(20);
+    text(label, x + w/2, y + h/2);
   }
   
-  Button getButton(int mx, int my)
+  boolean isClicked(int mx, int my)
   {
-    for (Button b: widgets)
-    {
-      if (b.isClicked(mx,my))
-      return b;
-    }
-    return null;
+    return mx > x
+    && mx < x + w
+    && my > y
+    && my < y + h;
   }
 }
