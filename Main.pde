@@ -220,7 +220,12 @@ void draw()
  //Screens - Alyx Harmon
   
   currentScreen.draw();
-  
+
+ if(currentScreen == screens.get(1)) //Liam McManus 
+  {
+    drawHeatMap();
+  }
+ 
   // ensuring they only display when the user selects the "find flights" screen  17/03/2026 - Nora Holden
   if(currentScreen == screens.get(2))
   {
