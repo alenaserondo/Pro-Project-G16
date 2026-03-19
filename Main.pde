@@ -206,34 +206,9 @@ void draw()
 
   background(255);
  
- //Screens - Alyx Harmon
-  currentScreen.draw();
-  if(currentScreen == screens.get(0))
-  {
-    int x = 100;
-    int y = 250;
-    text("flight data :", 100,100);
-    text("airline", 100, 150);
-    text("Dept Time", 200, 150);
-    text("Sch Time", 300, 150);
-    text("status", 400, 150);
-    for(Flights flight : flights) //loops through the objects 
-    {
-      // prints data to the console
+ 
       
-      fill(0);
-      text(flight.airline ,x,y);
-      x +=100;
-      text(flight.depTime, x,y);
-      x +=100;
-      text(flight.schDepTime, x,y);
-      x +=100;
-      text(flight.status, x,y);
-      x = 100;
-      y += 100;
       
-    }
-  }
   
   // draw heatmap when map screen selected - Liam 18/03/25 10pm
   else if (currentScreen == screens.get(1))
