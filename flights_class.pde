@@ -14,7 +14,7 @@ class Flights
   int arrTime;
 
  
-  Flights(String airline, int status, String date, int depTime, int schDepTime)
+  Flights(String airline, int status, String date, int depTime, int schDepTime, int arrTime)
   {
     this.status = status;
     this.date = date;
@@ -48,7 +48,7 @@ class Flights
   // Checks if flight is in range of dates user gives
   boolean inRange(int startDate, int endDate)
   {
-    return (dateInt >= startDate && dateInt <= endDate)
+    return (dateInt >= startDate && dateInt <= endDate);
   }
 
 String airlineName()
@@ -144,6 +144,7 @@ String airlineName()
     text ( hours, a +300, b );
     text( ":", a+ 315, b );
     text(minutes, a + 330, b );
+
     text( "loc2", a + 410, b - 40);
     text ( aHours, a +400, b );
     text( ":", a+ 415, b );
