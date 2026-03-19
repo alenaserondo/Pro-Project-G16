@@ -12,6 +12,7 @@ class Flights
   String message;
   String airlineName;
   int arrTime;
+color airlineColor;
 
  
   Flights(String airline, int status, String date, int depTime, int schDepTime, int arrTime)
