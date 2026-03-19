@@ -165,7 +165,7 @@ String airlineName()
     }
     else if (cancelled())
     {
-      statusCol = color(#DB6868); // red
+      statusCol = color(219, 3, 50); // red
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
