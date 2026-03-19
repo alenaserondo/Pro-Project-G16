@@ -155,7 +155,7 @@ String airlineName()
    // Fixed colour setting loops to work with functions - China Lynch 11/3/26 9pm
     if (late())
     {
-     statusCol = color(#FFA30D); // orange
+     statusCol = color(#F09D74); // orange
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
@@ -165,7 +165,7 @@ String airlineName()
     }
     else if (cancelled())
     {
-      statusCol = color(#FF0D0D); // red
+      statusCol = color(#DB6868); // red
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
@@ -175,7 +175,7 @@ String airlineName()
     }
     else
     {
-     statusCol = color(#0DFF4A); // green
+     statusCol = color(#53C479); // green
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
