@@ -9,17 +9,17 @@ class Flights
   int status;
   color statusCol; 
   String message;
-  //int arrTime;
+  int arrTime;
 
  
-  Flights(String airline, int status, String date, int depTime, int schDepTime)
+  Flights(String airline, int status, String date, int depTime, int schDepTime, int arrTime)
   {
     this.status = status;
     this.date = date;
     this.depTime = depTime;
     this.schDepTime = schDepTime;
     this.airline = airline;
-    //this.arrTime = arrTime;
+    this.arrTime = arrTime;
   }
   
   // Updated booleans to be boolean functions - China Lynch 10/3/26 7pm
