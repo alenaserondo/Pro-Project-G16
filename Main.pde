@@ -1,13 +1,19 @@
-
 import java.util.HashSet;
 //data reading - Nora Holden 10/03/2026 2:25pm
 ArrayList<Flights> flights = new ArrayList<Flights>(); //creates an empty arraylist
-ArrayList<Airport> airport = new ArrayList<Airport>(); 
+ArrayList<Airport> airport = new ArrayList<Airport>();
 ArrayList<Airline> airline = new ArrayList<Airline>();
 Table data;
 //Screens - Alyx Harmon
 ArrayList<Screen> screens;
 Screen currentScreen;
+//date
+PImage homescreenIcon;
+
+//Alena - Scroll Logic 18.03.26
+HScrollbar hs;
+int visibleFlights = 3;
+boolean firstMousePress = false;
 
 //Heatmap - Liam McManus 18/03/2025 9:40pm
 HashMap<String, Integer> stateCount = new HashMap<String, Integer>();
@@ -16,15 +22,18 @@ HashSet<String> seenAirports = new HashSet<String>(); //hashSet like an array bu
 PImage usaMap;
 
 
-
 void setup()
 {
   size(800, 600);
-  
+
+  homescreenIcon = loadImage("plane.png");// date
+
+  hs = new HScrollbar(width - 30, 170, 16, 400, 10);
+
   //data reading - Nora Holden 10/03/2026 2:25pm
-  data = loadTable("flights2k.csv","header");
-  
-  for(TableRow row : data.rows())
+  data = loadTable("flights2k.csv", "header");
+
+  for (TableRow row : data.rows())
   {
     String origin = row.getString("ORIGIN"); //uses csv header names to find the specific data
     int depTime = row.getInt("DEP_TIME");
@@ -33,45 +42,44 @@ void setup()
     int schDepTime = row.getInt("CRS_DEP_TIME");
     int arrTime = row.getInt("ARR_TIME");
     int status = row.getInt("CANCELLED");
-   
-    
-    Flights flight = new Flights(airline,  status,  date,  depTime, schDepTime, arrTime); // creates an object of each flight using the data
+
+
+    Flights flight = new Flights(airline, status, date, depTime, schDepTime, arrTime); // creates an object of each flight using the data
     flights.add(flight); //adds the object to the arraylist
   }
-  
-  for(TableRow row : data.rows())
+
+  for (TableRow row : data.rows())
   {
     String code = row.getString("ORIGIN"); //uses csv header names to find the specific data
     String city = row.getString("ORIGIN_CITY_NAME");
     String state= row.getString("ORIGIN_STATE_ABR");
     int wac = row.getInt("ORIGIN_WAC");
-   
+
     //loop modified so each airport is only counted once - Liam Mc 18/03/25 21:40pm
-    if(!seenAirports.contains(code))
+    if (!seenAirports.contains(code))
     {
       Airport airports = new Airport(code, city, state, wac ); // creates an object of each airport using the data from the row
       airport.add(airports); //adds the object to the arraylist
       seenAirports.add(code);
     }
   }
-  
+
   // count number of airports per state loop - Liam 18/03/25 10pm
-  for (Airport a: airport)
+  for (Airport a : airport)
   {
     String state = a.state;
-    
-    if(!stateCount.containsKey(state)) //if state not in state hashmap
+
+    if (!stateCount.containsKey(state)) //if state not in state hashmap
     {
       stateCount.put(state, 1);        //add state to hashmap with airport count = 1
-    }
-    else
+    } else
     {
       stateCount.put(state, stateCount.get(state) + 1); // else increase airport count by one for that state
     }
   }
-  
+
   // State positions - Liam 18/03/25 10pm
-  // WEST 
+  // WEST
   statePositions.put("WA", new PVector(120, 150));
   statePositions.put("OR", new PVector(120, 200));
   statePositions.put("CA", new PVector(100, 300));
@@ -83,7 +91,7 @@ void setup()
   statePositions.put("WY", new PVector(260, 160)); //missing
   statePositions.put("CO", new PVector(260, 310));
   statePositions.put("NM", new PVector(260, 360));
-  
+
   // MIDWEST
   statePositions.put("ND", new PVector(320, 190));
   statePositions.put("SD", new PVector(320, 230));
@@ -133,74 +141,71 @@ void setup()
   // NON-CONTINENTAL
   statePositions.put("AK", new PVector(100, 500));
   statePositions.put("HI", new PVector(200, 500));
-  
+
   usaMap = loadImage("usaMap3.png");
 
+  //more reading added 9:34am - Nora Holden
+  for (TableRow row : data.rows())
+  {
+    String flightNum = row.getString("MKT_CARRIER"); //uses csv header names to find the specific data
+    String carrierCode = row.getString("MKT_CARRIER_FL_NUM");
 
-//more reading added 9:34am - Nora Holden 
-  for(TableRow row : data.rows())
-    {
-      String flightNum = row.getString("MKT_CARRIER"); //uses csv header names to find the specific data
-      String carrierCode = row.getString("MKT_CARRIER_FL_NUM");
-      
-     
-       
-      Airline airlines = new Airline(flightNum, carrierCode); // creates an object of each airport using the data from the row
-      airline.add(airlines); //adds the object to the arraylist
-    }
-    
+
+
+    Airline airlines = new Airline(flightNum, carrierCode); // creates an object of each airport using the data from the row
+    airline.add(airlines); //adds the object to the arraylist
+  }
+
   //Screens - Alyx Harmon
-  
-   screens = new ArrayList<Screen>();
-  
+  // updated 16/03/2026
+  screens = new ArrayList<Screen>();
+
   // homescreen (0)
-  
-  Screen homescreen = new Screen(color(220, 200, 255));
-  homescreen.addWidget(new Button(50,30,325,50,"Go to Map"));
-  homescreen.addWidget(new Button(425,30,325,50,"Find Flights"));
-  
+
+  Screen homescreen = new HomeScreen(color(220, 200, 255));
+  homescreen.addWidget(new Button(50, 30, 325, 50, "Go to Map"));
+  homescreen.addWidget(new Button(width - 325 - 50, 30, 325, 50, "Find Flights"));
+
   // map screen (1)
-  
-  Screen mapScreen = new Screen(color(195,240,180));
-  mapScreen.addWidget(new Button(50,30,325,50,"Back to Home"));
-  mapScreen.addWidget(new Button(425,30,325,50,"Find Flights"));
-  
+
+  Screen mapScreen = new MapScreen(color(195, 240, 180));
+  mapScreen.addWidget(new Button(50, 30, 325, 50, "Back to Home"));
+  mapScreen.addWidget(new Button(width - 325 - 50, 30, 325, 50, "Find Flights"));
+
   // find flights screen (2)
-  
-  Screen flightsScreen = new Screen(color(240,180,200));
-  flightsScreen.addWidget(new Button(50,30,325,50,"Back to Home"));
-  flightsScreen.addWidget(new Button(425,30,325,50,"Go to Map"));
-  
+
+  Screen flightsScreen = new FlightScreen(color(240, 180, 200));
+  flightsScreen.addWidget(new Button(50, 30, 325, 50, "Back to Home"));
+  flightsScreen.addWidget(new Button(width - 325 - 50, 30, 325, 50, "Go to Map"));
+
   screens.add(homescreen);
   screens.add(mapScreen);
   screens.add(flightsScreen);
-  
+
   currentScreen = homescreen;
-  
-  
-  
+
+
+
   //demonstration of data that has been read in - Nora Holden 10/03/2026 2:25pm
 
- 
-  
-  for(Flights flight : flights) //loops through the objects 
+
+
+  for (Flights flight : flights) //loops through the objects
   {
-    // prints data to the console 
+    // prints data to the console
     println("flight data : " + flight.airline + " + "  + flight.depTime + " + " + flight.date  + " + " + flight.schDepTime + " + " + flight.status);
-  
   }
-  
-  
-  for(Airport airports : airport)
+
+
+  for (Airport airports : airport)
   {
     println("airport data : " + airports.code + " + " + airports.city  + " + " + airports.state + " + " + airports.wac);
   }
-  
-   for(Airline airlines : airline)
+
+  for (Airline airlines : airline)
   {
     println("airline data data : " + airlines.flightNum + " + " + airlines.carrierCode);
   }
-  
   
 }
 
@@ -208,40 +213,55 @@ void draw()
 {
 
   background(255);
- 
- //Screens - Alyx Harmon
+
+  //Screens - Alyx Harmon
+
   currentScreen.draw();
-  if(currentScreen == screens.get(0))
-  {
-    int x = 100;
-    int y = 250;
-    text("flight data :", 100,100);
-    text("airline", 100, 150);
-    text("Dept Time", 200, 150);
-    text("Sch Time", 300, 150);
-    text("status", 400, 150);
-    for(Flights flight : flights) //loops through the objects 
-    {
-      // prints data to the console
-      
-      fill(0);
-      text(flight.airline ,x,y);
-      x +=100;
-      text(flight.depTime, x,y);
-      x +=100;
-      text(flight.schDepTime, x,y);
-      x +=100;
-      text(flight.status, x,y);
-      x = 100;
-      y += 100;
-      
-    }
-  }
-  
-  // draw heatmap when map screen selected - Liam 18/03/25 10pm
-  else if (currentScreen == screens.get(1))
+
+  if (currentScreen == screens.get(1))
   {
     drawHeatMap();
+  }
+  // ensuring they only display when the user selects the "find flights" screen  17/03/2026 - Nora Holden
+  if (currentScreen == screens.get(2))
+  {
+    //Alena
+    hs.update();
+    hs.display();
+
+    float scrollPercent = hs.getPercent();
+    int maxStart = flights.size() - visibleFlights;
+
+    if (maxStart < 0)
+    {
+      maxStart = 0;
+    }
+
+    //Alena - Scroll Logic 18.03.26
+    int startIndex = int(scrollPercent * maxStart);
+
+    int y = 240;
+    int x = 50;
+    int a = 90;
+    int b = 310;
+    for (int i = 0; i < visibleFlights; i++)
+    {
+      int index = startIndex + i;
+
+      if (index < flights.size())
+      {
+        Flights flight = flights.get(index);
+        flight.drawFlightBox(x, y, a, b); // draws flights - Nora Holden
+
+        y += 120;
+        b += 120;
+      }
+    }
+  }
+
+  if (firstMousePress)
+  {
+    firstMousePress = false;
   }
 }
 
@@ -249,9 +269,12 @@ void draw()
 //Screens - Alyx Harmon
 void mousePressed()
 {
+  //alena
+  firstMousePress = true;
+
   Button b = currentScreen.getButton(mouseX, mouseY);
-  
-  if(b != null)
+
+  if (b != null)
   {
     if (b.label.equals("Go to Map"))
       currentScreen = screens.get(1);
@@ -265,42 +288,42 @@ void mousePressed()
 // draw heatmap function - Liam 18/03/25 10pm
 void drawHeatMap()
 {
-  image(usaMap, 0, 140, width -100, height-200);
+
+  image(usaMap, 0, 140, width -100, height -200);
   
   int squareLength = 35;
   int maxValue = 0;
   int minIntensity = 100;
-  for (int value: stateCount.values())
+  for (int value : stateCount.values())
   {
     if (value> maxValue) maxValue = value;
   }
-  
-  for (String state: stateCount.keySet())
+
+  for (String state : stateCount.keySet())
   {
     if (!statePositions.containsKey(state)) continue;
     int count = stateCount.get(state);
     PVector pos = statePositions.get(state);
-    
-    
-    
+
+
+
     float intensity = map(count, 0, maxValue, minIntensity, 255);
     fill(0, intensity, 0);
     rect(pos.x, pos.y, squareLength, squareLength);
-    
+
     fill(0);
     textAlign(CENTER, CENTER);
     textSize(12);
     text(state, pos.x + squareLength/2, pos.y + squareLength/2);
-   
   }
   fill(0);
   textSize(20);
   textAlign(LEFT);
   text("Airports per State Heatmap", 50, 120);
-  
+
   // gradient legend added - Liam 19/03/25 8:20 am
   //draw map legend
-  int legendX = 350;
+  int legendX = 300;
   int legendY = 540;
   int legendWidth = 300;
   int legendHeight = 20;
@@ -332,5 +355,4 @@ void drawHeatMap()
   text(maxValue, legendX + legendWidth, legendY + legendHeight + 15);
 
   text("Number of Airports", legendX + legendWidth/2, legendY - 10);
-
 }
