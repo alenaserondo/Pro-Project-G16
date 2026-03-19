@@ -6,12 +6,23 @@ Table data;
 //Screens - Alyx Harmon
 ArrayList<Screen> screens;
 Screen currentScreen;
+//date
+PImage homescreenIcon;
+
+//Alena - Scroll Logic 18.03.26
+HScrollbar hs;
+int visibleFlights = 3;
+boolean firstMousePress = false;
 
 
 
 void setup()
 {
   size(800, 600);
+
+  homescreenIcon = loadImage("plane.png");// date
+  
+  hs = new HScrollbar(width - 30, 170, 16, 400, 10);
   
   //data reading - Nora Holden 10/03/2026 2:25pm
   data = loadTable("flights2k.csv","header");
@@ -43,7 +54,7 @@ void setup()
     airport.add(airports); //adds the object to the arraylist
   }
 
-//more reading added 9:34am - Nora Holden 
+  //more reading added 9:34am - Nora Holden 
   for(TableRow row : data.rows())
     {
       String flightNum = row.getString("MKT_CARRIER"); //uses csv header names to find the specific data
@@ -56,26 +67,26 @@ void setup()
     }
     
   //Screens - Alyx Harmon
-  
+  // updated 16/03/2026
    screens = new ArrayList<Screen>();
   
   // homescreen (0)
   
-  Screen homescreen = new Screen(color(220, 200, 255));
+ Screen homescreen = new HomeScreen(color(220, 200, 255));
   homescreen.addWidget(new Button(50,30,325,50,"Go to Map"));
-  homescreen.addWidget(new Button(425,30,325,50,"Find Flights"));
+  homescreen.addWidget(new Button(width - 325 - 50,30,325,50,"Find Flights"));
   
   // map screen (1)
   
-  Screen mapScreen = new Screen(color(195,240,180));
+  Screen mapScreen = new MapScreen(color(195,240,180));
   mapScreen.addWidget(new Button(50,30,325,50,"Back to Home"));
-  mapScreen.addWidget(new Button(425,30,325,50,"Find Flights"));
+  mapScreen.addWidget(new Button(width - 325 - 50,30,325,50,"Find Flights"));
   
   // find flights screen (2)
   
-  Screen flightsScreen = new Screen(color(240,180,200));
+  Screen flightsScreen = new FlightScreen(color(240,180,200));
   flightsScreen.addWidget(new Button(50,30,325,50,"Back to Home"));
-  flightsScreen.addWidget(new Button(425,30,325,50,"Go to Map"));
+  flightsScreen.addWidget(new Button(width - 325 - 50,30,325,50,"Go to Map"));
   
   screens.add(homescreen);
   screens.add(mapScreen);
@@ -113,41 +124,63 @@ void setup()
 void draw()
 {
 
-  background(255);
- 
+ background(255);
+  
  //Screens - Alyx Harmon
+  
   currentScreen.draw();
-
- int x = 100;
-  int y = 250;
-  text("flight data :", 100,100);
-  text("airline", 100, 150);
-  text("Dept Time", 200, 150);
-  text("Sch Time", 300, 150);
-  text("status", 400, 150);
-   for(Flights flight : flights) //loops through the objects 
+  
+  // ensuring they only display when the user selects the "find flights" screen  17/03/2026 - Nora Holden
+  if(currentScreen == screens.get(2))
   {
-    // prints data to the console
+    //Alena
+    hs.update();
+    hs.display();
     
-    fill(0);
-    text(flight.airline ,x,y);
-    x +=100;
-    text(flight.depTime, x,y);
-    x +=100;
-    text(flight.schDepTime, x,y);
-    x +=100;
-    text(flight.status, x,y);
-    x = 100;
-    y += 100;
+    float scrollPercent = hs.getPercent();
+    int maxStart = flights.size() - visibleFlights;
+  
+   if (maxStart < 0)
+   {
+     maxStart = 0;
+   }
+
+    //Alena - Scroll Logic 18.03.26
+   int startIndex = int(scrollPercent * maxStart);
     
+   int y = 240;
+   int x = 50;
+   int a = 90;
+   int b = 310;
+   for(int i = 0; i < visibleFlights; i++)
+    {
+      int index = startIndex + i;
+  
+      if(index < flights.size())
+      {
+        Flights flight = flights.get(index);
+        flight.drawFlightBox(x, y, a, b); // draws flights - Nora Holden
+  
+        y += 120;
+        b += 120;
+      }
+    }
+  }
+  
+  if (firstMousePress)
+  {
+    firstMousePress = false;
   }
    
-}
+  }
 
 
 //Screens - Alyx Harmon
 void mousePressed()
 {
+   //alena
+  firstMousePress = true;
+
   Button b = currentScreen.getButton(mouseX, mouseY);
   
   if(b != null)
