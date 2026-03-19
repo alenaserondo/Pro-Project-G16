@@ -78,7 +78,7 @@ class MapScreen extends Screen
     
     fill(0);
     textSize(20);
-    text("Map of flight departures", 400, 565);
+    //text("Map of flight departures", 400, 565);
     
     fill(255);
     rect(25, 135, 750, 400);
