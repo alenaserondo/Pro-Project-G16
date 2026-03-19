@@ -35,7 +35,7 @@ void setup()
     int status = row.getInt("CANCELLED");
    
     
-    Flights flight = new Flights(airline,  status,  date,  depTime, schDepTime); // creates an object of each flight using the data
+    Flights flight = new Flights(airline,  status,  date,  depTime, schDepTime, arrTime); // creates an object of each flight using the data
     flights.add(flight); //adds the object to the arraylist
   }
   
