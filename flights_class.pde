@@ -121,7 +121,9 @@ String airlineName()
   {
     int hours = depTime / 100;
     int minutes = depTime % 100;
-    int length = arrTime = depTime;
+    int length = abs(arrTime  - depTime);
+    int lHours = length / 100;
+    int lMinutes = length % 100;
     int aHours = arrTime / 100;
     int aMins = arrTime % 100;
     int z = 700;
@@ -144,18 +146,21 @@ String airlineName()
     text ( hours, a +300, b );
     text( ":", a+ 315, b );
     text(minutes, a + 330, b );
-
     text( "loc2", a + 410, b - 40);
     text ( aHours, a +400, b );
     text( ":", a+ 415, b );
     text(aMins, a + 430, b );
-    text(length, a + 550, b - 20);
+    text(lHours, a + 550, b - 20);
+    text( ":", a+ 560, b - 20 );
+    text(lMinutes, a + 575, b - 20);
+    text("h", a + 590, b - 20);
     rect( a +345, b - 1, a -50, 2);
 
    // Fixed colour setting loops to work with functions - China Lynch 11/3/26 9pm
+   // Rotate text - Nora Holden 18/03/2026
     if (late())
     {
-     statusCol = color(#F09D74); // orange
+     statusCol = color(#FFA30D); // orange
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
@@ -165,7 +170,7 @@ String airlineName()
     }
     else if (cancelled())
     {
-      statusCol = color(219, 3, 50); // red
+      statusCol = color(#FF0D0D); // red
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
@@ -175,7 +180,7 @@ String airlineName()
     }
     else
     {
-     statusCol = color(#53C479); // green
+     statusCol = color(#0DFF4A); // green
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
