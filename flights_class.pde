@@ -72,5 +72,143 @@ class Flights
     fill(statusCol);
     rect(x, y, w, h, 10)
   }
+
+String airlineName()
+  {
+     if( airline.equals("AA"))
+    {
+      
+      return airlineName = "American Airlines";
+    }
+    else if( airline.equals("AS"))
+    {
+      return airlineName = "Alaska Airlines";
+    }
+    else if( airline.equals("WN"))
+    {
+      return airlineName = "Southwest Airlines";
+    }
+    else if( airline.equals("B6"))
+    {
+      return airlineName = "Jet Blue Airlines";
+    }
+    else if( airline.equals("HA"))
+    {
+      return airlineName = "Hawaiian Airlines";
+    }
+        else if( airline.equals("NK"))
+    {
+      return airlineName = "Spirit Airlines";
+    }
+    else
+    {
+      return airlineName = "name";
+    }
+    
+    
+  }
+  color airlineColour() 
+  {
+     if( airline.equals("AA"))
+    {
+      
+      return airlineColor = color(219, 3, 50);
+    }
+    else if( airline.equals("AS"))
+    {
+      return airlineColor = color(23, 126, 150);
+    }
+    else if( airline.equals("B6"))
+    {
+      return airlineColor = color(88, 205, 232);
+    }
+    else if( airline.equals("HA"))
+    {
+      return airlineColor = color(146, 50, 179);
+    }
+        else if( airline.equals("NK"))
+    {
+      return airlineColor = color(239, 255, 56);
+    }
+    else
+    {
+      return airlineColor = color(6, 103, 214);
+    }
+    
+  }
+  
+  // Draws flight visualizations 16/03/2026 - Nora Holden
+  void drawFlightBox(int x,int y, int a , int b)
+  {
+    int hours = depTime / 100;
+    int minutes = depTime % 100;
+    //int length = arrTime = depTime;
+    int z = 700;
+    int w = 100;
+    airlineColor = airlineColour();
+    airlineName = airlineName();
+   
+    if (late())
+    {
+      statusCol = color(#FFA30D); // orange
+      
+    }
+    else if (cancelled())
+    {
+      statusCol = color(#FF0D0D); // red
+    }
+    else
+    {
+      statusCol = color(177, 178, 179);
+    }
+    
+    
+    //stroke(0);
+    fill(177, 178, 179);
+    rect(x, y, z - 40, w);//10,10,10,10
+    fill(statusCol);
+    rect(x +( z -40), y, 30, w);
+    fill(airlineColor);
+    rect(x , y, 70, w);
+    fill(0);
+    text(airline , a - 5, b - 20);
+    text(airlineName , a + 120, b - 40);
+    text( date, a +120, b - 0);
+    text( "loc1", a + 310, b - 40);
+    text ( hours, a +300, b );
+    text( ":", a+ 315, b );
+    text(minutes, a + 330, b );
+    text( "loc2", a + 410, b - 40);
+    text ( hours, a +400, b );
+    text( ":", a+ 415, b );
+    text(minutes, a + 430, b );
+    text("length", a + 550, b - 20);
+    rect( a +345, b - 1, a -50, 2);
+    
+    if (late())
+    {
+      statusCol = color(#FFA30D); // orange
+      pushMatrix();              
+      translate( x + ( z - 25), y + w/2);       
+      rotate(-HALF_PI); 
+      fill(0);
+      text("Late", 0,0);       
+      popMatrix(); 
+    }
+    else if (cancelled())
+    {
+      statusCol = color(#FF0D0D); // red
+      pushMatrix();              
+      translate( x + ( z - 25), y + w/2);       
+      rotate(-HALF_PI); 
+      fill(0);
+      text("Cancelled", 0,0);       
+      popMatrix();
+    }
+    else
+    {
+      statusCol = color(177, 178, 179);
+    }
+  }
   
 }
