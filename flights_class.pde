@@ -10,7 +10,8 @@ class Flights
   int status;
   color statusCol; 
   String message;
-  //int arrTime;
+  String airlineName;
+  int arrTime;
 
  
   Flights(String airline, int status, String date, int depTime, int schDepTime)
@@ -20,7 +21,7 @@ class Flights
     this.depTime = depTime;
     this.schDepTime = schDepTime;
     this.airline = airline;
-    //this.arrTime = arrTime;
+    this.arrTime = arrTime;
     
     // convert date into int format MMDDYYYY
     dateInt = int(date.replace("/",""));
@@ -48,29 +49,6 @@ class Flights
   boolean inRange(int startDate, int endDate)
   {
     return (dateInt >= startDate && dateInt <= endDate)
-  }
-
-// Updated draw method to display flight status - China Lynch 18/3/26 8:11pm
-  void drawFlights(float x, float y, float w, float h)
-  {
-    // Fixed colour setting loops to work with functions - China Lynch 11/3/26 9pm
-    if (cancelled())
-    {
-      statusCol = color(#FF0D0D); // red
-      message = "CANCELLED";
-    } else if (late())
-    {
-      statusCol = color(#FFA30D); // orange
-      message = "DELAYED";
-
-    } else
-    {
-     statusCol = color(#0DFF4A); // green
-     message = "ON TIME";
-    }
-    
-    fill(statusCol);
-    rect(x, y, w, h, 10)
   }
 
 String airlineName()
@@ -138,30 +116,18 @@ String airlineName()
   }
   
   // Draws flight visualizations 16/03/2026 - Nora Holden
+  // Updated draw method to display flight status - China Lynch 18/3/26 8:11pm
   void drawFlightBox(int x,int y, int a , int b)
   {
     int hours = depTime / 100;
     int minutes = depTime % 100;
-    //int length = arrTime = depTime;
+    int length = arrTime = depTime;
+    int aHours = arrTime / 100;
+    int aMins = arrTime % 100;
     int z = 700;
     int w = 100;
     airlineColor = airlineColour();
     airlineName = airlineName();
-   
-    if (late())
-    {
-      statusCol = color(#FFA30D); // orange
-      
-    }
-    else if (cancelled())
-    {
-      statusCol = color(#FF0D0D); // red
-    }
-    else
-    {
-      statusCol = color(177, 178, 179);
-    }
-    
     
     //stroke(0);
     fill(177, 178, 179);
@@ -179,20 +145,21 @@ String airlineName()
     text( ":", a+ 315, b );
     text(minutes, a + 330, b );
     text( "loc2", a + 410, b - 40);
-    text ( hours, a +400, b );
+    text ( aHours, a +400, b );
     text( ":", a+ 415, b );
-    text(minutes, a + 430, b );
-    text("length", a + 550, b - 20);
+    text(aMins, a + 430, b );
+    text(length, a + 550, b - 20);
     rect( a +345, b - 1, a -50, 2);
-    
+
+   // Fixed colour setting loops to work with functions - China Lynch 11/3/26 9pm
     if (late())
     {
-      statusCol = color(#FFA30D); // orange
+     statusCol = color(#FFA30D); // orange
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
       fill(0);
-      text("Late", 0,0);       
+      text("LATE", 0,0);       
       popMatrix(); 
     }
     else if (cancelled())
@@ -202,12 +169,18 @@ String airlineName()
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
       fill(0);
-      text("Cancelled", 0,0);       
+      text("CANCELLED", 0,0);       
       popMatrix();
     }
     else
     {
-      statusCol = color(177, 178, 179);
+     statusCol = color(#0DFF4A); // green
+      pushMatrix();              
+      translate( x + ( z - 25), y + w/2);       
+      rotate(-HALF_PI); 
+      fill(0);
+      text("ON TIME", 0,0);
+      popMatrix();
     }
   }
   
