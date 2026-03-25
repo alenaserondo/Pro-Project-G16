@@ -18,7 +18,7 @@ void setup() {
   // Load CSV (PUT YOUR FILE IN THE "data" FOLDER)
   data = loadTable("flights2k.csv", "header");
 
-  // 🔹 STEP 1: Load data + group by airline
+  //  Load data + group by airline
   for (int i = 0; i < data.getRowCount(); i++) {
     String flightNum = data.getString(i, "flightNum");
     String carrier = data.getString(i, "carrierCode");
@@ -38,7 +38,7 @@ void setup() {
 
   println("Loaded airlines: " + airlineCodes.size());
 
-  // 🔹 STEP 2: Create dropdown
+  // Create dropdown
   ddl = cp5.addDropdownList("Airlines")
            .setPosition(100, 100)
            .setSize(200, 200);
@@ -52,7 +52,7 @@ void customize(DropdownList ddl) {
   ddl.setBarHeight(20);
   ddl.getCaptionLabel().setText("Select Airline");
 
-  // 🔹 Add ONLY unique airline codes
+  // Add only unique airline codes
   for (int i = 0; i < airlineCodes.size(); i++) {
     ddl.addItem(airlineCodes.get(i), i);
   }
@@ -65,7 +65,7 @@ void draw() {
   background(240);
 }
 
-// 🔹 STEP 3: FILTER when dropdown changes
+//  FILTER when dropdown changes
 void controlEvent(ControlEvent theEvent) {
   if (theEvent.isGroup()) {
 
@@ -88,7 +88,7 @@ void controlEvent(ControlEvent theEvent) {
   }
 }
 
-// 🔹 CLASS
+// CLASS
 class Airline {
   private String flightNum;
   private String carrierCode;
