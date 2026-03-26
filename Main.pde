@@ -18,11 +18,7 @@ HScrollbar hs;
 int visibleFlights = 3;
 boolean firstMousePress = false;
 
-ControlP5 cp5;
-DropdownList ddl;
 
-HashMap<String, ArrayList<Airline>> flightsByAirline = new HashMap<String, ArrayList<Airline>>();
-ArrayList<String> airlineCodes = new ArrayList<String>();
 
 //Heatmap - Liam McManus 18/03/2025 9:40pm
 HashMap<String, Integer> stateCount = new HashMap<String, Integer>();
@@ -217,37 +213,6 @@ void setup()
     println("airline data data : " + airlines.flightNum + " + " + airlines.carrierCode);
   }
 
-
-  cp5 = new ControlP5(this);
-
-
-  for (int i = 0; i < data.getRowCount(); i++) {
-    String flightNum = data.getString(i, "MKT_CARRIER");
-    String carrier = data.getString(i, "MKT_CARRIER_FL_NUM");
-
-    Airline a = new Airline(flightNum, carrier);
-    a.setFlightNum(flightNum);
-    a.setCarrierCode(carrier);
-
-    if (!flightsByAirline.containsKey(carrier)) {
-      flightsByAirline.put(carrier, new ArrayList<Airline>());
-      airlineCodes.add(carrier);
-    }
-
-    flightsByAirline.get(carrier).add(a);
-  }
-
-  println("Loaded airlines: " + airlineCodes.size());
-
-  // dropdown
-  ddl = cp5.addDropdownList("Airlines")
-    .setPosition(380, 180)
-    .setSize(100, 200);
-  
-   
-  ddl.close();
-  
-  customize(ddl);
   
 }
 
@@ -260,12 +225,7 @@ void draw()
 
   currentScreen.draw();
 
-  if (currentScreen == screens.get(2)) {
-    ddl.setVisible(true);
-  } else {
-    ddl.setVisible(false);
-  }
-
+  
   if (currentScreen == screens.get(1))
   {
     drawHeatMap();
@@ -446,38 +406,8 @@ void drawHeatMap()
   text("Number of Airports", legendX + legendWidth/2, legendY - 10);
 }
 
-void customize(DropdownList ddl) {
-  ddl.setBackgroundColor(color(190));
-  ddl.setItemHeight(20);
-  ddl.setBarHeight(40);
-  ddl.getCaptionLabel().setText("Select Airline");
-
-  for (int i = 0; i < airlineCodes.size(); i++) {
-    ddl.addItem(airlineCodes.get(i), i);
-  }
-  
-  ddl.setColorBackground(color(60));
-  ddl.setColorActive(color(255, 128));
-}
 
 
-void controlEvent(ControlEvent theEvent) {
-  if (theEvent.getController().getName().equals("Airlines")) {
 
-    int index = int(theEvent.getValue());
-    String selectedCarrier = airlineCodes.get(index);
-    
 
-    println("Selected airline: " + selectedCarrier);
 
-    ArrayList<Airline> filteredFlights = flightsByAirline.get(selectedCarrier);
-
-    println("Flights for " + selectedCarrier + ":");
-
-    for (int i = 0; i < min(10, filteredFlights.size()); i++) {
-      println(filteredFlights.get(i).getFlightNum());
-    }
-
-    println("Total flights: " + filteredFlights.size());
-  }
-}
