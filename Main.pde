@@ -276,6 +276,8 @@ void draw()
     {
       listToShow = flights;
     }
+    
+   
 
     float scrollPercent = hs.getPercent();
     int maxStart = listToShow.size() - visibleFlights;
@@ -332,7 +334,7 @@ void mousePressed()
       currentScreen = screens.get(0);
   }
   
-  // searching flight dates - China Lynch
+  // searching flight dates
   if (currentScreen == screens.get(2)) {
 
     // mouse click start search box
@@ -382,20 +384,19 @@ void mousePressed()
 
 
 //takes in written input - Nora Holden 24/03/2026
-// takes in int - China Lynch
 void keyPressed() {
   
-  if (keyCode == BACKSPACE) {
-    if (enteredText.length() > 0) {
-      enteredText = enteredText.substring(0, enteredText.length()-1);
-    }
-  } else if (keyCode == DELETE) {
-    enteredText = "";
-  } else if (keyCode != SHIFT && keyCode != CONTROL && keyCode != ALT) {
-    enteredText = enteredText + key;
-  }
+  //if (keyCode == BACKSPACE) {
+  //  if (enteredText.length() > 0) {
+  //    enteredText = enteredText.substring(0, enteredText.length()-1);
+  //  }
+  //} else if (keyCode == DELETE) {
+  //  enteredText = "";
+  //} else if (keyCode != SHIFT && keyCode != CONTROL && keyCode != ALT) {
+  //  enteredText = enteredText + key;
+  //}
 
-  airportFilter();
+  
   
   // when backspace pressed we delete
   if (key == BACKSPACE) {
@@ -420,16 +421,20 @@ void keyPressed() {
     if (typingEnd && endDateText.length() < 8)
       endDateText += key;
   }
-  //else
-  //{
-  //  if (keyCode != SHIFT && keyCode != CONTROL && keyCode != ALT) 
-  //    enteredText = enteredText + key;
-  //}
+  else
+  {
+    if (typingAirport = true)
+      enteredText = enteredText + key;
+  }
   
       
   // When both dates are 8 digits → filter
   if (startDateText.length() == 8 && endDateText.length() == 8) {
     filterFlights();
+  }
+  else
+  {
+    airportFilter();
   }
 }
 
