@@ -104,12 +104,18 @@ class FlightScreen extends Screen
     fill(red(bgColor)-40, green(bgColor)-40, blue(bgColor)-40);
     rect(0,0, width, 110);
     
+    //airport filter display - Nora Holden 24/03/2026
     fill(0);
     textSize(20);
     text("Filter search by:", 400, 150);
-    
     fill(255);
-    rect(50, 170, 700, 50);
+    //rect(50, 170, 700, 50);
+    rect(50, 170, 300,50);
+    fill(0);
+    text("search by airport:", 50, 170, 200, 50);
+    fill(0);
+    textAlign(LEFT, TOP);
+    text(enteredText, 230, 190, 200, 50);
     
     //// search bar drop box here ////
     

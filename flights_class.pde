@@ -13,9 +13,11 @@ class Flights
   String airlineName;
   int arrTime;
 color airlineColor;
+String origin;
+String destination;
 
  
-  Flights(String airline, int status, String date, int depTime, int schDepTime, int arrTime)
+  Flights(String airline, int status, String date, int depTime, int schDepTime, int arrTime, String origin, String destination)
   {
     this.status = status;
     this.date = date;
@@ -23,6 +25,8 @@ color airlineColor;
     this.schDepTime = schDepTime;
     this.airline = airline;
     this.arrTime = arrTime;
+    this.origin = origin;
+    this.destination = destination;
     
     // convert date into int format MMDDYYYY
     dateInt = int(date.replace("/",""));
@@ -132,6 +136,7 @@ String airlineName()
     airlineColor = airlineColour();
     airlineName = airlineName();
     
+    //updates to code to show locations - Nora Holden 22/03/2026
     //stroke(0);
     fill(177, 178, 179);
     rect(x, y, z - 40, w);//10,10,10,10
@@ -143,11 +148,11 @@ String airlineName()
     text(airline , a - 5, b - 20);
     text(airlineName , a + 120, b - 40);
     text( date, a +120, b - 0);
-    text( "loc1", a + 310, b - 40);
+    text( origin, a + 310, b - 40);
     text ( hours, a +300, b );
     text( ":", a+ 315, b );
     text(minutes, a + 330, b );
-    text( "loc2", a + 410, b - 40);
+    text( destination, a + 410, b - 40);
     text ( aHours, a +400, b );
     text( ":", a+ 415, b );
     text(aMins, a + 430, b );

@@ -1,6 +1,8 @@
 import java.util.HashSet;
+import controlP5.*;
 //data reading - Nora Holden 10/03/2026 2:25pm
 ArrayList<Flights> flights = new ArrayList<Flights>(); //creates an empty arraylist
+ArrayList<Flights> airportFilter = new ArrayList<Flights>(); // 25/03/2026 17:25 Nora Holden
 ArrayList<Airport> airport = new ArrayList<Airport>();
 ArrayList<Airline> airline = new ArrayList<Airline>();
 Table data;
@@ -9,11 +11,14 @@ ArrayList<Screen> screens;
 Screen currentScreen;
 //date
 PImage homescreenIcon;
+String enteredText = "";
 
 //Alena - Scroll Logic 18.03.26
 HScrollbar hs;
 int visibleFlights = 3;
 boolean firstMousePress = false;
+
+
 
 //Heatmap - Liam McManus 18/03/2025 9:40pm
 HashMap<String, Integer> stateCount = new HashMap<String, Integer>();
@@ -42,9 +47,10 @@ void setup()
     int schDepTime = row.getInt("CRS_DEP_TIME");
     int arrTime = row.getInt("ARR_TIME");
     int status = row.getInt("CANCELLED");
+    String destination = row.getString("DEST");
 
 
-    Flights flight = new Flights(airline, status, date, depTime, schDepTime, arrTime); // creates an object of each flight using the data
+    Flights flight = new Flights(airline, status, date, depTime, schDepTime, arrTime, origin, destination); // creates an object of each flight using the data
     flights.add(flight); //adds the object to the arraylist
   }
 
@@ -99,23 +105,23 @@ void setup()
   statePositions.put("KS", new PVector(320, 280)); // missing
   statePositions.put("OK", new PVector(320, 340));
   statePositions.put("TX", new PVector(320, 420));
-  
+
   statePositions.put("MN", new PVector(390, 200));
   statePositions.put("IA", new PVector(380, 270));
   statePositions.put("MO", new PVector(420, 320));
   statePositions.put("AR", new PVector(410, 360));
   statePositions.put("LA", new PVector(400, 420));
-  
+
   statePositions.put("WI", new PVector(440, 240));
   statePositions.put("IL", new PVector(440, 280));
   statePositions.put("MS", new PVector(450, 390));
-  
+
   statePositions.put("MI", new PVector(500, 220));
   statePositions.put("IN", new PVector(490, 280));
   statePositions.put("KY", new PVector(500, 320));
   statePositions.put("TN", new PVector(480, 340));
   statePositions.put("AL", new PVector(500, 400));
-  
+
   // EAST COAST
   statePositions.put("OH", new PVector(520, 280));
   statePositions.put("WV", new PVector(560, 280));//missing
@@ -124,20 +130,20 @@ void setup()
   statePositions.put("SC", new PVector(620, 380));
   statePositions.put("GA", new PVector(540, 390));
   statePositions.put("FL", new PVector(540, 460));
-  
+
   statePositions.put("PA", new PVector(590, 260));
   statePositions.put("NY", new PVector(590, 220));
   statePositions.put("VT", new PVector(680, 120));
   statePositions.put("NH", new PVector(700, 140));
   statePositions.put("ME", new PVector(740, 120));
-  
+
   statePositions.put("MA", new PVector(700, 180));
   statePositions.put("CT", new PVector(680, 200));
   statePositions.put("RI", new PVector(700, 200));
   statePositions.put("NJ", new PVector(660, 220));
   statePositions.put("DE", new PVector(660, 260));
   statePositions.put("MD", new PVector(640, 260));
-  
+
   // NON-CONTINENTAL
   statePositions.put("AK", new PVector(100, 500));
   statePositions.put("HI", new PVector(200, 500));
@@ -206,6 +212,7 @@ void setup()
   {
     println("airline data data : " + airlines.flightNum + " + " + airlines.carrierCode);
   }
+
   
 }
 
@@ -218,6 +225,7 @@ void draw()
 
   currentScreen.draw();
 
+  
   if (currentScreen == screens.get(1))
   {
     drawHeatMap();
@@ -228,9 +236,20 @@ void draw()
     //Alena
     hs.update();
     hs.display();
+    fill(255);
+
+    ArrayList<Flights> listToShow; // logic to update flights when Airport filter is selected - Nora Holden 25/03/2026
+
+    if (enteredText.length() > 0)
+    {
+      listToShow = airportFilter;
+    } else
+    {
+      listToShow = flights;
+    }
 
     float scrollPercent = hs.getPercent();
-    int maxStart = flights.size() - visibleFlights;
+    int maxStart = listToShow.size() - visibleFlights;
 
     if (maxStart < 0)
     {
@@ -248,9 +267,9 @@ void draw()
     {
       int index = startIndex + i;
 
-      if (index < flights.size())
+      if (index < listToShow.size())
       {
-        Flights flight = flights.get(index);
+        Flights flight = listToShow.get(index);
         flight.drawFlightBox(x, y, a, b); // draws flights - Nora Holden
 
         y += 120;
@@ -285,12 +304,42 @@ void mousePressed()
   }
 }
 
+//takes in written input - Nora Holden 24/03/2026
+void keyPressed() {
+  if (keyCode == BACKSPACE) {
+    if (enteredText.length() > 0) {
+      enteredText = enteredText.substring(0, enteredText.length()-1);
+    }
+  } else if (keyCode == DELETE) {
+    enteredText = "";
+  } else if (keyCode != SHIFT && keyCode != CONTROL && keyCode != ALT) {
+    enteredText = enteredText + key;
+  }
+
+  airportFilter();
+}
+
+
+// filters flights to be printed based on inputted text - Nora Holden 25/03/2026
+void airportFilter()
+{
+  airportFilter.clear(); // resets the arraylist
+
+  for (Flights flight : flights)
+  {
+    if (flight.origin.equalsIgnoreCase(enteredText))
+    {
+      airportFilter.add(flight);
+    }
+  }
+}
+
 // draw heatmap function - Liam 18/03/25 10pm
 void drawHeatMap()
 {
 
   image(usaMap, 0, 140, width -100, height -200);
-  
+
   int squareLength = 35;
   int maxValue = 0;
   int minIntensity = 100;
@@ -356,3 +405,9 @@ void drawHeatMap()
 
   text("Number of Airports", legendX + legendWidth/2, legendY - 10);
 }
+
+
+
+
+
+
