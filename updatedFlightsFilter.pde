@@ -41,11 +41,7 @@ ArrayList<Flights> listOfDateMatch(int startDate, int endDate)
 
 void drawFilterScreen() {
 
-  // labels
-  fill(0);
-  textSize(15);
-  text("Start Date (MMDDYYYY):", 50, 120);
-  text("End Date (MMDDYYYY):", 50, 170);
+
 
   // search bars
   drawSearchBars();
@@ -78,8 +74,8 @@ void drawDropdown() {
   rect(dx, dy, dw, dh);
 
   fill(0);
-  if (selected == -1) text("Select flight", dx + 10, dy + 20);
-  else text(flightsDisplay.get(selected), dx + 10, dy + 20);
+  if (selected == -1) text("Select flight", dx + 20, dy + 30);
+  else text(flightsDisplay.get(selected), dx + 20, dy + 30);
 
   if (dropdownOpen) {
     for (int i = 0; i < flightsDisplay.size(); i++) {
