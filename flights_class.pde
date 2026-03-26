@@ -171,7 +171,7 @@ String airlineName()
     }
     else if (cancelled())
     {
-      statusCol = color(#FF0D0D); // red
+      statusCol = color(#DB6161); // red
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
@@ -181,7 +181,7 @@ String airlineName()
     }
     else
     {
-     statusCol = color(#0DFF4A); // green
+     statusCol = color(#73B497); // green
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
