@@ -112,9 +112,9 @@ String airlineName()
     else
     {
       return airlineColor = color(6, 103, 214);
-    }
-    
+    } 
   }
+
   
   // Draws flight visualizations 16/03/2026 - Nora Holden
   // Updated draw method to display flight status - China Lynch 18/3/26 8:11pm
