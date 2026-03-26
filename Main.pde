@@ -28,6 +28,12 @@ int ah = 50;
 
 import java.util.HashSet;
 import controlP5.*;
+// alyx
+ControlP5 cp5;
+DropdownList statusDDL;
+
+int selectedStatus = -1;
+
 //data reading - Nora Holden 10/03/2026 2:25pm
 ArrayList<Flights> flights = new ArrayList<Flights>(); //creates an empty arraylist
 ArrayList<Flights> airportFilter = new ArrayList<Flights>(); // 25/03/2026 17:25 Nora Holden
@@ -57,6 +63,22 @@ PImage usaMap;
 void setup()
 {
   size(800, 600);
+
+  cp5 = new ControlP5(this);
+  statusDDL = cp5.addDropdownList("Status Filter")
+    .setPosition(540, 170)
+    .setSize(200,250)
+    .setItemHeight(20)
+    .setBarHeight(50)
+    .setColorBackground(color(255))
+    .setColorActive(color(255))
+    .setColorLabel(color(0))
+    .setColorValue(color(0))
+    .setColorForeground(color(200,140,160));
+    
+  statusDDL.addItem("On Time", 0);
+  statusDDL.addItem("Cancelled", 1);
+  statusDDL.addItem("Delayed", 2);
 
   homescreenIcon = loadImage("plane.png");// date
 
@@ -191,29 +213,41 @@ void setup()
 
   //Screens - Alyx Harmon
   // updated 16/03/2026
+  // updated & new screen added 26/3
   screens = new ArrayList<Screen>();
 
   // homescreen (0)
 
   Screen homescreen = new HomeScreen(color(220, 200, 255));
-  homescreen.addWidget(new Button(50, 30, 325, 50, "Go to Map"));
-  homescreen.addWidget(new Button(width - 325 - 50, 30, 325, 50, "Find Flights"));
+  homescreen.addWidget(new Button(50, 30, 200, 50, "Go to Map"));
+  homescreen.addWidget(new Button(300, 30, 200, 50, "Find Flights"));
+  homescreen.addWidget(new Button(550, 30, 200, 50, "Filter By Date")):
 
   // map screen (1)
 
   Screen mapScreen = new MapScreen(color(195, 240, 180));
-  mapScreen.addWidget(new Button(50, 30, 325, 50, "Back to Home"));
-  mapScreen.addWidget(new Button(width - 325 - 50, 30, 325, 50, "Find Flights"));
+  mapScreen.addWidget(new Button(50, 30, 200, 50, "Back to Home"));
+  mapScreen.addWidget(new Button(300, 30, 200, 50, "Find Flights"));
+  mapScreen.addWidget(new Button(550, 30, 200, 50, "Filter By Date"));
 
   // find flights screen (2)
 
   Screen flightsScreen = new FlightScreen(color(240, 180, 200));
-  flightsScreen.addWidget(new Button(50, 30, 325, 50, "Back to Home"));
-  flightsScreen.addWidget(new Button(width - 325 - 50, 30, 325, 50, "Go to Map"));
+  flightsScreen.addWidget(new Button(50, 30, 200, 50, "Back to Home"));
+  flightsScreen.addWidget(new Button(300, 30, 200, 50, "Go to Map"));
+  flightsScreen.addWidget(new Button(550, 30, 200, 50, "Filter By Date"));
+
+  // filter by date screen (3)
+  
+  Screen dateFilterScreen = new DateFilterScreen(color(180, 225 ,255));
+  dateFilterScreen.addWidget(new Button(50, 30, 200, 50, "Back to Home"));
+  dateFilterScreen.addWidget(new Button(300, 30, 200, 50, "Go to Map"));
+  dateFilterScreen.addWidget(new Button(550, 30, 200, 50, "Find Flights"));
 
   screens.add(homescreen);
   screens.add(mapScreen);
   screens.add(flightsScreen);
+  screens.add(dateFilterScreen);
 
   currentScreen = homescreen;
 
@@ -248,6 +282,8 @@ void draw()
 
   background(255);
 
+  statusDDL.hide();
+
   //Screens - Alyx Harmon
 
   currentScreen.draw();
@@ -260,6 +296,10 @@ void draw()
   // ensuring they only display when the user selects the "find flights" screen  17/03/2026 - Nora Holden
   if (currentScreen == screens.get(2))
   {
+    if (currentScreen == screens.get(2))
+    {
+      statusDDL.show();
+
     //Alena
     hs.update();
     hs.display();
@@ -308,10 +348,22 @@ void draw()
       }
     }
   }
+  else
+  {
+    statusDDL.hide();
+  }
 
   if (firstMousePress)
   {
     firstMousePress = false;
+  }
+}
+
+void controlEvent(ControlEvent event)
+{
+  if (event.isFrom(statusDDL))
+  {
+    selectedStatus = int(event.getValue());
   }
 }
 
@@ -332,6 +384,8 @@ void mousePressed()
       currentScreen = screens.get(2);
     else if (b.label.equals("Back to Home"))
       currentScreen = screens.get(0);
+    else if (b.label.equals("Filter By Date"))
+      currentScreen = screens.get(3);
   }
   
   // searching flight dates
