@@ -69,9 +69,3 @@ class Airport
     }
   }
 }
-
-
-
-
-
-
