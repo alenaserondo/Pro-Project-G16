@@ -85,35 +85,34 @@ String airlineName()
     
     
   }
-  color airlineColour() 
+color airlineColour()
+{
+  if (airline.equals("AA"))
   {
-     if( airline.equals("AA"))
-    {
-      
-      return airlineColor = color(219, 3, 50);
-    }
-    else if( airline.equals("AS"))
-    {
-      return airlineColor = color(23, 126, 150);
-    }
-    else if( airline.equals("B6"))
-    {
-      return airlineColor = color(88, 205, 232);
-    }
-    else if( airline.equals("HA"))
-    {
-      return airlineColor = color(146, 50, 179);
-    }
-        else if( airline.equals("NK"))
-    {
-      return airlineColor = color(239, 255, 56);
-    }
-    else
-    {
-      return airlineColor = color(6, 103, 214);
-    }
-    
+    return airlineColor = color(160, 60, 70);
+  } 
+  else if (airline.equals("AS"))
+  {
+    return airlineColor = color(60, 110, 120);
+  } 
+  else if (airline.equals("B6"))
+  {
+    return airlineColor = color(120, 170, 185);
+  } 
+  else if (airline.equals("HA"))
+  {
+    return airlineColor = color(130, 90, 150);
+  } 
+  else if (airline.equals("NK"))
+  {
+    return airlineColor = color(210, 210, 120);
+  } 
+  else
+  {
+    return airlineColor = color(80, 120, 160);
   }
+}
+
   
   // Draws flight visualizations 16/03/2026 - Nora Holden
   // Updated draw method to display flight status - China Lynch 18/3/26 8:11pm
