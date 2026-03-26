@@ -40,9 +40,6 @@ ArrayList<Flights> listOfDateMatch(int startDate, int endDate)
 }
 
 void drawFilterScreen() {
-
-
-
   // search bars
   drawSearchBars();
   drawSearchBars();
@@ -168,7 +165,7 @@ void filterFlights() {
   filtered = listOfDateMatch(start, end);
 
   for (Flights f : filtered) {
-    String label = f.airlineName() + "Departure: " + f.depTime + " " + f.date;
+    String label = f.airlineName() + f.depTime + " " + f.date;
     flightsDisplay.add(label);
   }
   selected = -1;
