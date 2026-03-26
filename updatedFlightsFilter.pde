@@ -19,7 +19,7 @@ int sx = 100, sy = 50, sw = 200, sh = 30;
 int ex = 100, ey = 100;
 
 // draw()
-// if (currentScreen == screens.get(2)) {
+// if (currentScreen == screens.get(3)) {
 //   drawFilterScreen();
 //}
 
