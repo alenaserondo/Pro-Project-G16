@@ -1,36 +1,6 @@
-
-// Wrote flight class - China Lynch 10/3/26 2:30pm
-// Created search bar and drop down filter for dates - China
-boolean dropdownOpen = false;
-int selected = -1;
-ArrayList<Flights> filtered = new ArrayList<Flights>();
-ArrayList<String> flightsDisplay = new ArrayList<String>();   // dropdown display
-
-// dropdown pos
-int dx = 400, dy = 200, dw = 200, dh = 30;
-
-String startDateText = "";
-String endDateText = "";
-String enteredText = "";
-boolean typingStart = false;
-boolean typingEnd = false;
-boolean typingAirport = false;
-
-// search bar pos
-int sx = 400, sy = 50, sw = 200, sh = 30;
-int ex = 400, ey = 100;
-
-int ax = 50;
-int ay = 170;
-int aw = 200;
-int ah = 50;
-
-
 import java.util.HashSet;
-import controlP5.*;
 //data reading - Nora Holden 10/03/2026 2:25pm
 ArrayList<Flights> flights = new ArrayList<Flights>(); //creates an empty arraylist
-ArrayList<Flights> airportFilter = new ArrayList<Flights>(); // 25/03/2026 17:25 Nora Holden
 ArrayList<Airport> airport = new ArrayList<Airport>();
 ArrayList<Airline> airline = new ArrayList<Airline>();
 Table data;
@@ -46,18 +16,20 @@ HScrollbar hs;
 int visibleFlights = 3;
 boolean firstMousePress = false;
 
-
-
-//Heatmap - Liam McManus 18/03/2025 9:40pm
+//Heatmap - Liam McManus 18/03/2026 9:40pm
 HashMap<String, Integer> stateCount = new HashMap<String, Integer>();
 HashMap<String, PVector> statePositions = new HashMap<String, PVector>();
 HashSet<String> seenAirports = new HashSet<String>(); //hashSet like an array but doesn't allow duplicate values
 PImage usaMap;
+//heatmap interactive features added - Liam 25.03.2026 9pm
+String hoveredState = "";
+String selectedState = "";
+int minAirports = 0;
+
 
 void setup()
 {
   size(800, 600);
-
   homescreenIcon = loadImage("plane.png");// date
 
   hs = new HScrollbar(width - 30, 170, 16, 400, 10);
@@ -74,10 +46,9 @@ void setup()
     int schDepTime = row.getInt("CRS_DEP_TIME");
     int arrTime = row.getInt("ARR_TIME");
     int status = row.getInt("CANCELLED");
-    String destination = row.getString("DEST");
 
 
-    Flights flight = new Flights(airline, status, date, depTime, schDepTime, arrTime, origin, destination); // creates an object of each flight using the data
+    Flights flight = new Flights(airline, status, date, depTime, schDepTime, arrTime); // creates an object of each flight using the data
     flights.add(flight); //adds the object to the arraylist
   }
 
@@ -113,64 +84,64 @@ void setup()
 
   // State positions - Liam 18/03/25 10pm
   // WEST
-  statePositions.put("WA", new PVector(120, 150));
-  statePositions.put("OR", new PVector(120, 200));
+  statePositions.put("WA", new PVector(145, 160));
+  statePositions.put("OR", new PVector(130, 210));
   statePositions.put("CA", new PVector(100, 300));
-  statePositions.put("NV", new PVector(140, 270));
-  statePositions.put("ID", new PVector(190, 210));
-  statePositions.put("UT", new PVector(200, 280));
+  statePositions.put("NV", new PVector(150, 270));
+  statePositions.put("ID", new PVector(190, 220));
+  statePositions.put("UT", new PVector(205, 290));
   statePositions.put("AZ", new PVector(200, 360));
   statePositions.put("MT", new PVector(250, 190));
-  statePositions.put("WY", new PVector(260, 160)); //missing
-  statePositions.put("CO", new PVector(260, 310));
-  statePositions.put("NM", new PVector(260, 360));
+  statePositions.put("WY", new PVector(250, 240));
+  statePositions.put("CO", new PVector(270, 300));
+  statePositions.put("NM", new PVector(260, 370));
 
   // MIDWEST
-  statePositions.put("ND", new PVector(320, 190));
-  statePositions.put("SD", new PVector(320, 230));
-  statePositions.put("NE", new PVector(320, 220)); // missing
-  statePositions.put("KS", new PVector(320, 280)); // missing
-  statePositions.put("OK", new PVector(320, 340));
-  statePositions.put("TX", new PVector(320, 420));
-
+  statePositions.put("ND", new PVector(330, 190));
+  statePositions.put("SD", new PVector(330, 230));
+  statePositions.put("NE", new PVector(340, 275));
+  statePositions.put("KS", new PVector(340, 315));
+  statePositions.put("OK", new PVector(360, 360));
+  statePositions.put("TX", new PVector(340, 420));
+  
   statePositions.put("MN", new PVector(390, 200));
-  statePositions.put("IA", new PVector(380, 270));
-  statePositions.put("MO", new PVector(420, 320));
-  statePositions.put("AR", new PVector(410, 360));
-  statePositions.put("LA", new PVector(400, 420));
-
-  statePositions.put("WI", new PVector(440, 240));
-  statePositions.put("IL", new PVector(440, 280));
-  statePositions.put("MS", new PVector(450, 390));
-
+  statePositions.put("IA", new PVector(400, 265));
+  statePositions.put("MO", new PVector(415, 320));
+  statePositions.put("AR", new PVector(420, 370));
+  statePositions.put("LA", new PVector(420, 425));
+  
+  statePositions.put("WI", new PVector(440, 220));
+  statePositions.put("IL", new PVector(450, 285));
+  statePositions.put("MS", new PVector(455, 395));
+  
   statePositions.put("MI", new PVector(500, 220));
   statePositions.put("IN", new PVector(490, 280));
   statePositions.put("KY", new PVector(500, 320));
   statePositions.put("TN", new PVector(480, 340));
   statePositions.put("AL", new PVector(500, 400));
-
+  
   // EAST COAST
   statePositions.put("OH", new PVector(520, 280));
-  statePositions.put("WV", new PVector(560, 280));//missing
-  statePositions.put("VA", new PVector(620, 300));
-  statePositions.put("NC", new PVector(620, 340));
-  statePositions.put("SC", new PVector(620, 380));
+  statePositions.put("WV", new PVector(560, 300));//missing
+  statePositions.put("VA", new PVector(600, 300));
+  statePositions.put("NC", new PVector(580, 340));
+  statePositions.put("SC", new PVector(580, 380));
   statePositions.put("GA", new PVector(540, 390));
   statePositions.put("FL", new PVector(540, 460));
-
-  statePositions.put("PA", new PVector(590, 260));
+  
+  statePositions.put("PA", new PVector(570, 260));
   statePositions.put("NY", new PVector(590, 220));
-  statePositions.put("VT", new PVector(680, 120));
-  statePositions.put("NH", new PVector(700, 140));
-  statePositions.put("ME", new PVector(740, 120));
-
-  statePositions.put("MA", new PVector(700, 180));
-  statePositions.put("CT", new PVector(680, 200));
-  statePositions.put("RI", new PVector(700, 200));
-  statePositions.put("NJ", new PVector(660, 220));
-  statePositions.put("DE", new PVector(660, 260));
-  statePositions.put("MD", new PVector(640, 260));
-
+  statePositions.put("VT", new PVector(600, 180));
+  statePositions.put("NH", new PVector(700, 160));
+  statePositions.put("ME", new PVector(640, 160));
+  
+  statePositions.put("MA", new PVector(700, 200));
+  statePositions.put("CT", new PVector(700, 280));
+  statePositions.put("RI", new PVector(700, 240));
+  statePositions.put("NJ", new PVector(700, 320));
+  statePositions.put("DE", new PVector(700, 360));
+  statePositions.put("MD", new PVector(700, 400));
+  
   // NON-CONTINENTAL
   statePositions.put("AK", new PVector(100, 500));
   statePositions.put("HI", new PVector(200, 500));
@@ -239,7 +210,6 @@ void setup()
   {
     println("airline data data : " + airlines.flightNum + " + " + airlines.carrierCode);
   }
-
   
 }
 
@@ -252,7 +222,6 @@ void draw()
 
   currentScreen.draw();
 
-  
   if (currentScreen == screens.get(1))
   {
     drawHeatMap();
@@ -263,22 +232,9 @@ void draw()
     //Alena
     hs.update();
     hs.display();
-    fill(255);
-    
-    drawFilterScreen();
-
-    ArrayList<Flights> listToShow; // logic to update flights when Airport filter is selected - Nora Holden 25/03/2026
-
-    if (enteredText.length() > 0)
-    {
-      listToShow = airportFilter;
-    } else
-    {
-      listToShow = flights;
-    }
 
     float scrollPercent = hs.getPercent();
-    int maxStart = listToShow.size() - visibleFlights;
+    int maxStart = flights.size() - visibleFlights;
 
     if (maxStart < 0)
     {
@@ -296,9 +252,9 @@ void draw()
     {
       int index = startIndex + i;
 
-      if (index < listToShow.size())
+      if (index < flights.size())
       {
-        Flights flight = listToShow.get(index);
+        Flights flight = flights.get(index);
         flight.drawFlightBox(x, y, a, b); // draws flights - Nora Holden
 
         y += 120;
@@ -325,218 +281,53 @@ void mousePressed()
   if (b != null)
   {
     if (b.label.equals("Go to Map"))
+    {
       currentScreen = screens.get(1);
+      selectedState = "";
+    }
     else if (b.label.equals("Find Flights"))
       currentScreen = screens.get(2);
     else if (b.label.equals("Back to Home"))
       currentScreen = screens.get(0);
   }
   
-  // searching flight dates - China Lynch
-  if (currentScreen == screens.get(2)) {
-
-    // mouse click start search box
-    if (mouseX > sx && mouseX < sx + sw && mouseY > sy && mouseY < sy + sh) {
-      typingStart = true;
-      typingEnd = false;
-      typingAirport = false;
-      return;
-    }
-
-    // end
-    if (mouseX > ex && mouseX < ex + sw && mouseY > ey && mouseY < ey + sh) {
-      typingEnd = true;
-      typingStart = false;
-      typingAirport = false;
-      return;
-    }
-    
-    //airport
-      if (mouseX > ax && mouseX < ax + aw && mouseY > ay && mouseY < ay + ah) {
-      typingStart = false;
-      typingEnd = false;
-      typingAirport = true;
-      return;
-    }
-
-    // clicking on dropdown box
-    if (mouseX > dx && mouseX < dx + dw && mouseY > dy && mouseY < dy + dh) {
-      dropdownOpen = !dropdownOpen;
-      return;
-    }
-
-    // dropdown selection
-    if (dropdownOpen) {
-      for (int i = 0; i < flightsDisplay.size(); i++) {
-        int iy = dy + dh * (i + 1);
-        if (mouseX > dx && mouseX < dx + dw && mouseY > iy && mouseY < iy + dh) {
-          selected = i;
-          dropdownOpen = false;
-          return;
+  if (currentScreen == screens.get(1))
+  {
+    updateSlider();
+    for (String state : statePositions.keySet())
+    {
+      PVector pos = statePositions.get(state);
+      int squareLength = 35;
+      if (mouseX > pos.x && mouseX < pos.x + squareLength &&
+          mouseY > pos.y && mouseY < pos.y + squareLength)
+      {
+        if(selectedState.equals(state))
+        {
+          selectedState = "";
+        }
+        else
+        {
+          selectedState = state;
         }
       }
-      dropdownOpen = false;
     }
   }
+  
 }
 
-
-//takes in written input - Nora Holden 24/03/2026
-// takes in int - China Lynch
-void keyPressed() {
-  
-  if (keyCode == BACKSPACE) {
-    if (enteredText.length() > 0) {
-      enteredText = enteredText.substring(0, enteredText.length()-1);
-    }
-  } else if (keyCode == DELETE) {
-    enteredText = "";
-  } else if (keyCode != SHIFT && keyCode != CONTROL && keyCode != ALT) {
-    enteredText = enteredText + key;
-  }
-
-  airportFilter();
-  
-  // when backspace pressed we delete
-  if (key == BACKSPACE) {
-    if (typingStart && startDateText.length() > 0)
-      startDateText = startDateText.substring(0, startDateText.length() - 1);
-
-    if (typingEnd && endDateText.length() > 0)
-      endDateText = endDateText.substring(0, endDateText.length() - 1);
-      
-     
-    if (typingAirport && enteredText.length() > 0)
-      enteredText = enteredText.substring(0, enteredText.length() - 1);
-    return;
-  }
-
-  // Only ints allowed
-  if (key >= '0' && key <= '9') {
-
-    if (typingStart && startDateText.length() < 8)
-      startDateText += key;
-
-    if (typingEnd && endDateText.length() < 8)
-      endDateText += key;
-  }
-  //else
-  //{
-  //  if (keyCode != SHIFT && keyCode != CONTROL && keyCode != ALT) 
-  //    enteredText = enteredText + key;
-  //}
-  
-      
-  // When both dates are 8 digits → filter
-  if (startDateText.length() == 8 && endDateText.length() == 8) {
-    filterFlights();
-  }
-}
-
-void drawSearchBars() {
-  // Start search
-  fill(typingStart ? 220 : 240);
-  stroke(0);
-  rect(sx, sy, sw, sh);
-  fill(0);
-  text("Start Date (MMDDYYYY): " + startDateText, sx + 10, sy + 20);
-
-  // End search
-  fill(typingEnd ? 220 : 240);
-  stroke(0);
-  rect(ex, ey, sw, sh);
-  fill(0);
-  text("End Date (MMDDYYYY):   " + endDateText, ex + 10, ey + 20);
-}
-
-void drawFilterScreen() {
-
- 
-  
-
-  // search bars
-  drawSearchBars();
-  drawSearchBars();
-
-  // dropdown
-  drawDropdown();
-}
-
-
-// Create date range filtering methods - China Lynch 24/03/26 3:30pm
-// Adds flights to new ArrayList if in date range
-ArrayList<Flights> listOfDateMatch(int startDate, int endDate)
+void mouseDragged()
 {
-  ArrayList<Flights> dateMatch = new ArrayList<Flights>();
-  for (Flights f : flights)   // Flights == type, flights == arrayList of flights
-  {
-    if (f.inRange(startDate, endDate))
-    {
-      dateMatch.add(f);
-    }
-  }
-  return dateMatch;
+  updateSlider();
 }
 
-void drawDropdown() {
-  fill(240);
-  stroke(0);
-  rect(dx, dy, dw, dh);
-
-  fill(0);
-  if (selected == -1) text("Select flight", dx + 10, dy + 20);
-  else text(flightsDisplay.get(selected), dx + 10, dy + 20);
-
-  if (dropdownOpen) {
-    for (int i = 0; i < flightsDisplay.size(); i++) {
-      int iy = dy + dh * (i + 1);
-      fill(255);
-      rect(dx, iy, dw, dh);
-      fill(0);
-      text(flightsDisplay.get(i), dx + 10, iy + 20);
-    }
-  }
-}
-void filterFlights() {
-
-  flightsDisplay.clear();
-  filtered.clear();
-
-  int start = int(startDateText);
-  int end = int(endDateText);
-
-  filtered = listOfDateMatch(start, end);
-
-  for (Flights f : filtered) {
-    String label = f.airlineName() + "Departure: " + f.depTime + " " + f.date;
-    flightsDisplay.add(label);
-  }
-  selected = -1;
-  dropdownOpen = false;
-}
-
-
-
-// filters flights to be printed based on inputted text - Nora Holden 25/03/2026
-void airportFilter()
-{
-  airportFilter.clear(); // resets the arraylist
-
-  for (Flights flight : flights)
-  {
-    if (flight.origin.equalsIgnoreCase(enteredText))
-    {
-      airportFilter.add(flight);
-    }
-  }
-}
-
-// draw heatmap function - Liam 18/03/25 10pm
+// draw heatmap function - Liam 18/03/26 10pm
+// heatmap appearence updated and now also includes states with zero airports - Liam 19/03/2026 1:45pm
+// interactive features added to heatmap (hover over state for more info) - Liam 25/03/2026 9pm
 void drawHeatMap()
 {
 
   image(usaMap, 0, 140, width -100, height -200);
-
+  
   int squareLength = 35;
   int maxValue = 0;
   int minIntensity = 100;
@@ -545,27 +336,87 @@ void drawHeatMap()
     if (value> maxValue) maxValue = value;
   }
 
-  for (String state : stateCount.keySet())
+  for (String state : statePositions.keySet())
   {
-    if (!statePositions.containsKey(state)) continue;
-    int count = stateCount.get(state);
+    int count = 0;
+    if (stateCount.containsKey(state))
+    {
+      count = stateCount.get(state);
+    }
+    if(count < minAirports)
+    {
+      continue;
+    }
     PVector pos = statePositions.get(state);
-
+    
 
 
     float intensity = map(count, 0, maxValue, minIntensity, 255);
-    fill(0, intensity, 0);
+    fill(intensity, 0, 255);
     rect(pos.x, pos.y, squareLength, squareLength);
 
     fill(0);
     textAlign(CENTER, CENTER);
     textSize(12);
     text(state, pos.x + squareLength/2, pos.y + squareLength/2);
+    
+    if (mouseX > pos.x && mouseX < pos.x + squareLength 
+        && mouseY > pos.y && mouseY < pos.y + squareLength)
+    {
+      hoveredState = state;
+    }
+  }
+  
+  if (hoveredState != "")
+  {
+    int count = 0;
+    if (stateCount.containsKey(hoveredState))
+    {
+      count = stateCount.get(hoveredState);
+    }
+    
+    fill(255);
+    stroke(150);
+    rect(mouseX , mouseY-25, 140, 25);
+    
+    fill(0);
+    textAlign(LEFT, CENTER);
+    textSize(16);
+    text(hoveredState + ": " + count + " airports", mouseX + 5, mouseY - 12);
+    hoveredState = "";
+  }
+  
+  if (selectedState != "")
+  {
+    stroke (0);
+
+    
+    for (TableRow row : data.rows())
+    {
+      String originState = row.getString("ORIGIN_STATE_ABR");
+      String destState = row.getString("DEST_STATE_ABR");
+      
+      if(originState.equals(selectedState))
+      {
+        if(statePositions.containsKey(destState))
+        {
+          PVector start = statePositions.get(originState);
+          PVector end = statePositions.get(destState);
+          
+          noFill();
+          bezier(start.x + squareLength /2 , start.y + squareLength / 2,
+                 start.x, start.y - 50, 
+                 end.x, end.y-50, 
+                 end.x + squareLength / 2, end.y );
+        }
+      }
+    }
   }
   fill(0);
-  textSize(20);
-  textAlign(LEFT);
-  text("Airports per State Heatmap", 50, 120);
+  textAlign(CENTER, CENTER);
+  textSize(30);
+
+  text("Airports per State Heatmap", 410, 120);
 
   // gradient legend added - Liam 19/03/25 8:20 am
   //draw map legend
@@ -580,12 +431,13 @@ void drawHeatMap()
     float value = map(i, 0, legendWidth, 0, maxValue);
     float intensity = map(value, 0, maxValue, minIntensity, 255);
 
-    stroke(0, intensity, 0);
+    stroke(intensity, 0, 255);
     line(legendX + i, legendY, legendX + i, legendY + legendHeight);
   }
 
   noStroke();
-
+  
+ 
   //border around legend
   noFill();
   stroke(0);
@@ -599,6 +451,41 @@ void drawHeatMap()
 
   text("0", legendX, legendY + legendHeight + 15);
   text(maxValue, legendX + legendWidth, legendY + legendHeight + 15);
+  
+   // slider added - Liam 26/03/2026 11pm
+  float handleX = map(minAirports, 0, maxValue, legendX, legendX + legendWidth);
+  float handleY = legendY;
+  
+  fill(255, 0, 0);
+  stroke(0);
+  rect(handleX, handleY, 10, legendHeight);
+  
+  fill(0);
+  textAlign(CENTER);
+  textSize(14);
+  text("Min Airports: " + minAirports, legendX + legendWidth/2, legendY - 25);
+
 
   text("Number of Airports", legendX + legendWidth/2, legendY - 10);
+}
+
+void updateSlider()
+{
+  int legendX = 300;
+  int legendY = 540;
+  int legendWidth = 300;
+  
+  if (mouseX> legendX && mouseX < legendX + legendWidth &&
+      mouseY > legendY && mouseY < legendY + 20)
+  {
+    float percent = map(mouseX, legendX, legendX + legendWidth, 0, 1.01);
+    
+    int maxValue = 0;
+    for (int value : stateCount.values())
+    {
+      if (value>maxValue) maxValue = value;
+    }
+    
+    minAirports = int(percent * maxValue);
+  }
 }
