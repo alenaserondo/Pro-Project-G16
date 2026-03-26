@@ -54,19 +54,20 @@ void drawSearchBars() {
   stroke(0);
   rect(sx, sy, sw, sh);
   fill(0);
-  text("Start Date (MMDDYYYY): " + startDateText, sx + 10, sy + 20);
+  text("Start Date (MMDDYYYY): " + startDateText, sx + 10, sy + sh/2);
 
   // End search
   fill(typingEnd ? 220 : 240);
   stroke(0);
   rect(ex, ey, sw, sh);
   fill(0);
-  text("End Date (MMDDYYYY):   " + endDateText, ex + 10, ey + 20);
+  text("End Date (MMDDYYYY):   " + endDateText, ex + 10, ey + sh/2);
 }
 
 // dropdown display
 void drawDropdown() {
   fill(240);
+  textSize(14);
   stroke(0);
   rect(dx, dy, dw, dh);
 
@@ -80,7 +81,7 @@ void drawDropdown() {
       fill(255);
       rect(dx, iy, dw, dh);
       fill(0);
-      text(flightsDisplay.get(i), dx + 10, iy + 20);
+      text(flightsDisplay.get(i), dx + 10, iy + dh/2);
     }
   }
 }
@@ -88,7 +89,7 @@ void drawDropdown() {
 void mousePressed()
 {
   // searching flight dates
-  if (currentScreen == screens.get(2)) {
+  if (currentScreen == screens.get(3)) {
 
     // mouse click start search box
     if (mouseX > sx && mouseX < sx + sw && mouseY > sy && mouseY < sy + sh) {
@@ -122,6 +123,9 @@ void mousePressed()
       }
       dropdownOpen = false;
     }
+  }
+  if (startDateText.length() == 8 && endDateText.length() == 8) {
+    filterFlights();
   }
 }
 
@@ -165,7 +169,7 @@ void filterFlights() {
   filtered = listOfDateMatch(start, end);
 
   for (Flights f : filtered) {
-    String label = f.airlineName() + f.depTime + " " + f.date;
+  String label = f.airlineName() + "  " + f.depTime + "  " + f.date;
     flightsDisplay.add(label);
   }
   selected = -1;
