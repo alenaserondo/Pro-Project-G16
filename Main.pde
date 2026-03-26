@@ -357,6 +357,10 @@ void draw()
   {
     firstMousePress = false;
   }
+  if (currentScreen == screens.get(3))
+    {
+      drawFilterScreen();
+    }
 }
 
 void controlEvent(ControlEvent event)
@@ -366,7 +370,6 @@ void controlEvent(ControlEvent event)
     selectedStatus = int(event.getValue());
   }
 }
-
 
 //Screens - Alyx Harmon
 void mousePressed()
