@@ -123,6 +123,29 @@ class FlightScreen extends Screen
       b.draw();
   }
 }
+
+class DateFilterScreen extends Screen
+{
+  DateFilterScreen(color c)
+  {
+    super(c);
+  }
+  
+  void draw()
+  {
+    background(bgColor);
+    
+    fill(red(bgColor)-40, green(bgColor)-40, blue(bgColor)-40);
+    rect(0,0, width, 110);
+    
+    fill(0);
+    textSize(20);
+    text("Choose Departure and Return date:", 400, 150);
+    
+    for (Button b: widgets)
+      b.draw();
+  }
+}
   
 
 
