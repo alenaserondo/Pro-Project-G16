@@ -332,7 +332,7 @@ void mousePressed()
       currentScreen = screens.get(0);
   }
   
-  // searching flight dates
+  // searching flight dates - China Lynch
   if (currentScreen == screens.get(2)) {
 
     // mouse click start search box
@@ -382,6 +382,7 @@ void mousePressed()
 
 
 //takes in written input - Nora Holden 24/03/2026
+// takes in int - China Lynch
 void keyPressed() {
   
   if (keyCode == BACKSPACE) {
