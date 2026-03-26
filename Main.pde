@@ -257,6 +257,9 @@ void draw()
         b += 120;
       }
     }
+
+// Draw flights filter - China Lynch 25/03/26
+   drawFilterScreen();
   }
 
   if (firstMousePress)
