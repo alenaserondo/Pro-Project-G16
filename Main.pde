@@ -1,31 +1,3 @@
-
-// Wrote flight class - China Lynch 10/3/26 2:30pm
-// Created search bar and drop down filter for dates - China
-boolean dropdownOpen = false;
-int selected = -1;
-ArrayList<Flights> filtered = new ArrayList<Flights>();
-ArrayList<String> flightsDisplay = new ArrayList<String>();   // dropdown display
-
-// dropdown pos
-int dx = 400, dy = 200, dw = 200, dh = 30;
-
-String startDateText = "";
-String endDateText = "";
-String enteredText = "";
-boolean typingStart = false;
-boolean typingEnd = false;
-boolean typingAirport = false;
-
-// search bar pos
-int sx = 400, sy = 50, sw = 200, sh = 30;
-int ex = 400, ey = 100;
-
-int ax = 50;
-int ay = 170;
-int aw = 200;
-int ah = 50;
-
-
 import java.util.HashSet;
 import controlP5.*;
 //data reading - Nora Holden 10/03/2026 2:25pm
@@ -33,13 +5,13 @@ ArrayList<Flights> flights = new ArrayList<Flights>(); //creates an empty arrayl
 ArrayList<Flights> airportFilter = new ArrayList<Flights>(); // 25/03/2026 17:25 Nora Holden
 ArrayList<Airport> airport = new ArrayList<Airport>();
 ArrayList<Airline> airline = new ArrayList<Airline>();
-Table data;
+Airline a;
 //Screens - Alyx Harmon
 ArrayList<Screen> screens;
 Screen currentScreen;
 //date
 PImage homescreenIcon;
-
+String enteredText = "";
 
 //Alena - Scroll Logic 18.03.26
 HScrollbar hs;
@@ -54,8 +26,44 @@ HashMap<String, PVector> statePositions = new HashMap<String, PVector>();
 HashSet<String> seenAirports = new HashSet<String>(); //hashSet like an array but doesn't allow duplicate values
 PImage usaMap;
 
+
 void setup()
 {
+  
+  
+   size(600, 400);
+  
+  cp5 = new ControlP5(this);
+
+  data = loadTable("flights2k.csv", "header");
+
+  for (int i = 0; i < data.getRowCount(); i++) {
+    String flightNum = data.getString(i, "MKT_CARRIER_FL_NUM");
+    String carrier = data.getString(i, "MKT_CARRIER");
+
+    Airline a = new Airline(flightNum, carrier);
+    a.setFlightNum(flightNum);
+    a.setCarrierCode(carrier);
+
+    if (!flightsByAirline.containsKey(carrier)) { // if airline not seen before 
+      flightsByAirline.put(carrier, new ArrayList<Airline>());  // add flight to that airline's list
+      airlineCodes.add(carrier);
+    }
+
+    flightsByAirline.get(carrier).add(a);
+  }
+
+  airlineDDL = cp5.addDropdownList("Airlines")
+                 .setPosition(50, 100)
+                 .setSize(200, 200);
+
+  customizeAirlineDDL();
+
+  flightDDL = cp5.addDropdownList("Flights")
+                .setPosition(300, 100)
+                .setSize(200, 200);
+
+  customizeFlightDDL();
   size(800, 600);
 
   homescreenIcon = loadImage("plane.png");// date
@@ -264,8 +272,6 @@ void draw()
     hs.update();
     hs.display();
     fill(255);
-    
-    drawFilterScreen();
 
     ArrayList<Flights> listToShow; // logic to update flights when Airport filter is selected - Nora Holden 25/03/2026
 
@@ -331,59 +337,10 @@ void mousePressed()
     else if (b.label.equals("Back to Home"))
       currentScreen = screens.get(0);
   }
-  
-  // searching flight dates
-  if (currentScreen == screens.get(2)) {
-
-    // mouse click start search box
-    if (mouseX > sx && mouseX < sx + sw && mouseY > sy && mouseY < sy + sh) {
-      typingStart = true;
-      typingEnd = false;
-      typingAirport = false;
-      return;
-    }
-
-    // end
-    if (mouseX > ex && mouseX < ex + sw && mouseY > ey && mouseY < ey + sh) {
-      typingEnd = true;
-      typingStart = false;
-      typingAirport = false;
-      return;
-    }
-    
-    //airport
-      if (mouseX > ax && mouseX < ax + aw && mouseY > ay && mouseY < ay + ah) {
-      typingStart = false;
-      typingEnd = false;
-      typingAirport = true;
-      return;
-    }
-
-    // clicking on dropdown box
-    if (mouseX > dx && mouseX < dx + dw && mouseY > dy && mouseY < dy + dh) {
-      dropdownOpen = !dropdownOpen;
-      return;
-    }
-
-    // dropdown selection
-    if (dropdownOpen) {
-      for (int i = 0; i < flightsDisplay.size(); i++) {
-        int iy = dy + dh * (i + 1);
-        if (mouseX > dx && mouseX < dx + dw && mouseY > iy && mouseY < iy + dh) {
-          selected = i;
-          dropdownOpen = false;
-          return;
-        }
-      }
-      dropdownOpen = false;
-    }
-  }
 }
-
 
 //takes in written input - Nora Holden 24/03/2026
 void keyPressed() {
-  
   if (keyCode == BACKSPACE) {
     if (enteredText.length() > 0) {
       enteredText = enteredText.substring(0, enteredText.length()-1);
@@ -395,125 +352,7 @@ void keyPressed() {
   }
 
   airportFilter();
-  
-  // when backspace pressed we delete
-  if (key == BACKSPACE) {
-    if (typingStart && startDateText.length() > 0)
-      startDateText = startDateText.substring(0, startDateText.length() - 1);
-
-    if (typingEnd && endDateText.length() > 0)
-      endDateText = endDateText.substring(0, endDateText.length() - 1);
-      
-     
-    if (typingAirport && enteredText.length() > 0)
-      enteredText = enteredText.substring(0, enteredText.length() - 1);
-    return;
-  }
-
-  // Only ints allowed
-  if (key >= '0' && key <= '9') {
-
-    if (typingStart && startDateText.length() < 8)
-      startDateText += key;
-
-    if (typingEnd && endDateText.length() < 8)
-      endDateText += key;
-  }
-  //else
-  //{
-  //  if (keyCode != SHIFT && keyCode != CONTROL && keyCode != ALT) 
-  //    enteredText = enteredText + key;
-  //}
-  
-      
-  // When both dates are 8 digits → filter
-  if (startDateText.length() == 8 && endDateText.length() == 8) {
-    filterFlights();
-  }
 }
-
-void drawSearchBars() {
-  // Start search
-  fill(typingStart ? 220 : 240);
-  stroke(0);
-  rect(sx, sy, sw, sh);
-  fill(0);
-  text("Start Date (MMDDYYYY): " + startDateText, sx + 10, sy + 20);
-
-  // End search
-  fill(typingEnd ? 220 : 240);
-  stroke(0);
-  rect(ex, ey, sw, sh);
-  fill(0);
-  text("End Date (MMDDYYYY):   " + endDateText, ex + 10, ey + 20);
-}
-
-void drawFilterScreen() {
-
- 
-  
-
-  // search bars
-  drawSearchBars();
-  drawSearchBars();
-
-  // dropdown
-  drawDropdown();
-}
-
-
-// Create date range filtering methods - China Lynch 24/03/26 3:30pm
-// Adds flights to new ArrayList if in date range
-ArrayList<Flights> listOfDateMatch(int startDate, int endDate)
-{
-  ArrayList<Flights> dateMatch = new ArrayList<Flights>();
-  for (Flights f : flights)   // Flights == type, flights == arrayList of flights
-  {
-    if (f.inRange(startDate, endDate))
-    {
-      dateMatch.add(f);
-    }
-  }
-  return dateMatch;
-}
-
-void drawDropdown() {
-  fill(240);
-  stroke(0);
-  rect(dx, dy, dw, dh);
-
-  fill(0);
-  if (selected == -1) text("Select flight", dx + 10, dy + 20);
-  else text(flightsDisplay.get(selected), dx + 10, dy + 20);
-
-  if (dropdownOpen) {
-    for (int i = 0; i < flightsDisplay.size(); i++) {
-      int iy = dy + dh * (i + 1);
-      fill(255);
-      rect(dx, iy, dw, dh);
-      fill(0);
-      text(flightsDisplay.get(i), dx + 10, iy + 20);
-    }
-  }
-}
-void filterFlights() {
-
-  flightsDisplay.clear();
-  filtered.clear();
-
-  int start = int(startDateText);
-  int end = int(endDateText);
-
-  filtered = listOfDateMatch(start, end);
-
-  for (Flights f : filtered) {
-    String label = f.airlineName() + "Departure: " + f.depTime + " " + f.date;
-    flightsDisplay.add(label);
-  }
-  selected = -1;
-  dropdownOpen = false;
-}
-
 
 
 // filters flights to be printed based on inputted text - Nora Holden 25/03/2026
@@ -601,3 +440,64 @@ void drawHeatMap()
 
   text("Number of Airports", legendX + legendWidth/2, legendY - 10);
 }
+
+
+//Airline filter : Alena Serondo 25.03.26
+
+import controlP5.*;
+import java.util.*;
+
+ControlP5 cp5;
+DropdownList airlineDDL;
+DropdownList flightDDL;
+
+Table data;
+HashMap<String, ArrayList<Airline>> flightsByAirline = new HashMap<String, ArrayList<Airline>>();
+ArrayList<String> airlineCodes = new ArrayList<String>();
+
+
+void customizeAirlineDDL() {
+  airlineDDL.setBackgroundColor(color(190));
+  airlineDDL.setItemHeight(20);
+  airlineDDL.setBarHeight(20);
+  airlineDDL.getCaptionLabel().setText("Select Airline");
+
+  for (int i = 0; i < airlineCodes.size(); i++) {
+    airlineDDL.addItem(airlineCodes.get(i), i);
+  }
+}
+
+void customizeFlightDDL() {
+  flightDDL.setBackgroundColor(color(190));
+  flightDDL.setItemHeight(20);
+  flightDDL.setBarHeight(20);
+  flightDDL.getCaptionLabel().setText("Select Flight");
+}
+
+
+void controlEvent(ControlEvent theEvent) {
+
+  if (theEvent.getController().getName().equals("Airlines")) {
+
+    int index = int(theEvent.getValue());
+    String selectedCarrier = airlineCodes.get(index);
+
+    println("Selected airline: " + selectedCarrier);
+
+    ArrayList<Airline> flights = flightsByAirline.get(selectedCarrier);
+
+    flightDDL.clear();
+
+    for (int i = 0; i < flights.size(); i++) {
+      flightDDL.addItem(flights.get(i).getFlightNum(), i);
+    }
+  }
+
+  if (theEvent.getController().getName().equals("Flights")) {
+
+    int index = int(theEvent.getValue());
+    println("Selected flight index: " + index);
+  }
+}
+
+
