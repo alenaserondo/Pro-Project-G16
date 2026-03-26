@@ -58,6 +58,7 @@ void setup()
   statusDDL.addItem("On Time", 0);
   statusDDL.addItem("Cancelled", 1);
   statusDDL.addItem("Delayed", 2);
+  statusDDL.close();
 
 >>>>>>> main
   homescreenIcon = loadImage("plane.png");// date
