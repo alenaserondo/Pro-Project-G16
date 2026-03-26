@@ -12,9 +12,12 @@ class Flights
   String message;
   String airlineName;
   int arrTime;
+color airlineColor;
+String origin;
+String destination;
 
  
-  Flights(String airline, int status, String date, int depTime, int schDepTime, int arrTime)
+  Flights(String airline, int status, String date, int depTime, int schDepTime, int arrTime, String origin, String destination)
   {
     this.status = status;
     this.date = date;
@@ -22,6 +25,8 @@ class Flights
     this.schDepTime = schDepTime;
     this.airline = airline;
     this.arrTime = arrTime;
+    this.origin = origin;
+    this.destination = destination;
     
     // convert date into int format MMDDYYYY
     dateInt = int(date.replace("/",""));
@@ -120,7 +125,9 @@ color airlineColour()
   {
     int hours = depTime / 100;
     int minutes = depTime % 100;
-    int length = arrTime = depTime;
+    int length = abs(arrTime  - depTime);
+    int lHours = length / 100;
+    int lMinutes = length % 100;
     int aHours = arrTime / 100;
     int aMins = arrTime % 100;
     int z = 700;
@@ -128,6 +135,7 @@ color airlineColour()
     airlineColor = airlineColour();
     airlineName = airlineName();
     
+    //updates to code to show locations - Nora Holden 22/03/2026
     //stroke(0);
     fill(177, 178, 179);
     rect(x, y, z - 40, w);//10,10,10,10
@@ -139,22 +147,25 @@ color airlineColour()
     text(airline , a - 5, b - 20);
     text(airlineName , a + 120, b - 40);
     text( date, a +120, b - 0);
-    text( "loc1", a + 310, b - 40);
+    text( origin, a + 310, b - 40);
     text ( hours, a +300, b );
     text( ":", a+ 315, b );
     text(minutes, a + 330, b );
-
-    text( "loc2", a + 410, b - 40);
+    text( destination, a + 410, b - 40);
     text ( aHours, a +400, b );
     text( ":", a+ 415, b );
     text(aMins, a + 430, b );
-    text(length, a + 550, b - 20);
+    text(lHours, a + 550, b - 20);
+    text( ":", a+ 560, b - 20 );
+    text(lMinutes, a + 575, b - 20);
+    text("h", a + 590, b - 20);
     rect( a +345, b - 1, a -50, 2);
 
    // Fixed colour setting loops to work with functions - China Lynch 11/3/26 9pm
+   // Rotate text - Nora Holden 18/03/2026
     if (late())
     {
-     statusCol = color(#F09D74); // orange
+     statusCol = color(#FFA30D); // orange
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
@@ -164,7 +175,7 @@ color airlineColour()
     }
     else if (cancelled())
     {
-      statusCol = color(219, 3, 50); // red
+      statusCol = color(#DB6161); // red
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
@@ -174,7 +185,7 @@ color airlineColour()
     }
     else
     {
-     statusCol = color(#53C479); // green
+     statusCol = color(#73B497); // green
       pushMatrix();              
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
