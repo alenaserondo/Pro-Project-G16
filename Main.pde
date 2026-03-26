@@ -277,6 +277,40 @@ void draw()
     {
       statusDDL.show();
 
+      ArrayList<Flights> filteredFlights = new ArrayList<Flights>();
+
+      for (Flights f : flights)
+      {
+        boolean matches = true;
+        
+        if (selectedStatus == 0)
+        {
+           if (f.depTime != f.schDepTime || f.status == 1)
+           {
+             matches = false;
+           }
+        }
+        else if (selectedStatus == 1)
+        {
+          if (f.status != 1)
+          {
+            matches = false;
+          }
+        }
+        else if (selectedStatus == 2)
+        {
+          if (f.depTime <= f.schDepTime || f.status == 1)
+          {
+            matches = false;
+          }
+        }
+
+        if (matches)
+        {
+          filteredFlights.add(f);
+        }
+      }
+
     //Alena
     hs.update();
     hs.display();
