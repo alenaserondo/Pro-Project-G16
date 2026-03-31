@@ -15,9 +15,10 @@ class Flights
 color airlineColor;
 String origin;
 String destination;
+String flightNum;
 
  
-  Flights(String airline, int status, String date, int depTime, int schDepTime, int arrTime, String origin, String destination)
+  Flights(String airline, int status, String date, int depTime, int schDepTime, int arrTime, String origin, String destination, String flightNum) // new variables added  for display and filters - Nora Holden 25/03/2026
   {
     this.status = status;
     this.date = date;
@@ -27,6 +28,7 @@ String destination;
     this.arrTime = arrTime;
     this.origin = origin;
     this.destination = destination;
+    this.flightNum = flightNum;
     
     // convert date into int format MMDDYYYY
     dateInt = int(date.replace("/",""));
@@ -56,7 +58,8 @@ String destination;
     return (dateInt >= startDate && dateInt <= endDate);
   }
 
-String airlineName()
+
+String airlineName() //Nora Holden
   {
      if( airline.equals("AA"))
     {
@@ -85,12 +88,13 @@ String airlineName()
     }
     else
     {
-      return airlineName = "name";
+      return airlineName = "";
     }
     
     
   }
-color airlineColour()
+  
+color airlineColour() //Nora Holden
 {
   if (airline.equals("AA"))
   {
@@ -162,6 +166,7 @@ color airlineColour()
     rect( a +345, b - 1, a -50, 2);
 
    // Fixed colour setting loops to work with functions - China Lynch 11/3/26 9pm
+   
    // Rotate text - Nora Holden 18/03/2026
     if (late())
     {
@@ -170,7 +175,7 @@ color airlineColour()
       translate( x + ( z - 25), y + w/2);       
       rotate(-HALF_PI); 
       fill(0);
-      text("LATE", 0,0);       
+      text("DELAYED", 0,0);       
       popMatrix(); 
     }
     else if (cancelled())
