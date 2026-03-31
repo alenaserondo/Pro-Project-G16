@@ -107,15 +107,16 @@ class FlightScreen extends Screen
     //airport filter display - Nora Holden 24/03/2026
     fill(0);
     textSize(20);
-    text("Filter search by:", 400, 150);
+    text("Filter search by:", 400, 140);
     fill(255);
     //rect(50, 170, 700, 50);
-    rect(50, 170, 300,50);
+    fill(typingAirport ? 240 : 255);
+    rect(50, 170, 200,50); 
     fill(0);
-    text("search by airport:", 50, 170, 200, 50);
+    text("search by airport:", 30, 170, 200, 50);
     fill(0);
     textAlign(LEFT, TOP);
-    text(enteredText, 230, 190, 200, 50);
+    text(enteredText, 210, 190, 200, 50);
     
     //// search bar drop box here ////
     
@@ -136,11 +137,14 @@ class DateFilterScreen extends Screen
     background(bgColor);
     
     fill(red(bgColor)-40, green(bgColor)-40, blue(bgColor)-40);
+    
     rect(0,0, width, 110);
     
     fill(0);
+    
     textSize(20);
-    text("Choose Departure and Return date:", 400, 150);
+    text("Choose Departure and Return date:", 400, 130);
+    
     
     for (Button b: widgets)
       b.draw();
@@ -175,6 +179,9 @@ class Button
     fill(0);
     textAlign(CENTER, CENTER);
     textSize(20);
+    
+
+    
     text(label, x + w/2, y + h/2);
   }
   
