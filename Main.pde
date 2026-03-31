@@ -301,6 +301,8 @@ void draw()
   if (currentScreen == screens.get(3))
   {
     drawFilterScreen();
+    airlineDDL.hide();
+    flightDDL.hide();
   }
 
 
