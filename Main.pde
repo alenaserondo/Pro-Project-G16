@@ -37,6 +37,7 @@ String selectedFlightNum = ""; //Alena filter
 HashMap<String, ArrayList<Airline>> flightsByAirline = new HashMap<String, ArrayList<Airline>>();
 DropdownList airlineDDL;// Alena now
 DropdownList flightDDL;// Alena now
+ArrayList<Flights> filteredAirline = new ArrayList<Flights>();
 ArrayList<String> airlineCodes = new ArrayList<String>(); //Alena now
 
 // alyx
@@ -302,7 +303,7 @@ void draw()
   {
     drawFilterScreen();
     airlineDDL.hide();
-    flightDDL.hide();
+  flightDDL.hide();
   }
 
 
@@ -370,9 +371,9 @@ void draw()
       tempList.retainAll(airportFilter);
     }
     
-    if(filtered.size() > 0)
+    if(filteredAirline.size() > 0)
     {
-      tempList.retainAll(filtered);
+      tempList.retainAll(filteredAirline);
     }
     
     if (currentScreen == screens.get(3)) // only for date filter
@@ -750,10 +751,10 @@ if (theEvent.getController().getName().equals("Airlines")) {
   }
 
   // filter by airline only for now
-  filtered.clear();
+  filteredAirline.clear();
   for (Flights f : flights) {
     if (f.airline.equalsIgnoreCase(selectedCarrier)) {
-      filtered.add(f);
+      filteredAirline.add(f);
     }
   }
 }
@@ -774,11 +775,11 @@ if (theEvent.getController().getName().equals("Flights")) {
 }
 
 void filterByAirlineAndFlight(String airlineCode, String flightNum) {
-  filtered.clear(); // reset filtered list
+  filteredAirline.clear(); // reset filtered list
 
   for (Flights f : flights) {
     if (f.airline.equalsIgnoreCase(airlineCode) && f.flightNum.equals(flightNum)) {
-      filtered.add(f);
+      filteredAirline.add(f);
     }
   }
 }
