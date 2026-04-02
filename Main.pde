@@ -294,7 +294,11 @@ void draw()
   //Screens - Alyx Harmon
 
   currentScreen.draw();
-
+  if (currentScreen == screens.get(0))
+{
+airlineDDL.hide();
+  flightDDL.hide();
+}
   if (currentScreen == screens.get(1))
   {
     drawHeatMap();
