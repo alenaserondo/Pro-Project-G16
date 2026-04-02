@@ -792,64 +792,64 @@ void setStatePostions()
 {
   // State positions - Liam 18/03/25 10pm
   // WEST
-  statePositions.put("WA", new PVector(120, 150));
-  statePositions.put("OR", new PVector(120, 200));
+  statePositions.put("WA", new PVector(145, 160));
+  statePositions.put("OR", new PVector(130, 210));
   statePositions.put("CA", new PVector(100, 300));
-  statePositions.put("NV", new PVector(140, 270));
-  statePositions.put("ID", new PVector(190, 210));
-  statePositions.put("UT", new PVector(200, 280));
+  statePositions.put("NV", new PVector(150, 270));
+  statePositions.put("ID", new PVector(190, 220));
+  statePositions.put("UT", new PVector(205, 290));
   statePositions.put("AZ", new PVector(200, 360));
   statePositions.put("MT", new PVector(250, 190));
-  statePositions.put("WY", new PVector(260, 160)); //missing
-  statePositions.put("CO", new PVector(260, 310));
-  statePositions.put("NM", new PVector(260, 360));
+  statePositions.put("WY", new PVector(250, 240));
+  statePositions.put("CO", new PVector(270, 300));
+  statePositions.put("NM", new PVector(260, 370));
 
   // MIDWEST
-  statePositions.put("ND", new PVector(320, 190));
-  statePositions.put("SD", new PVector(320, 230));
-  statePositions.put("NE", new PVector(320, 220)); // missing
-  statePositions.put("KS", new PVector(320, 280)); // missing
-  statePositions.put("OK", new PVector(320, 340));
-  statePositions.put("TX", new PVector(320, 420));
-
+  statePositions.put("ND", new PVector(330, 190));
+  statePositions.put("SD", new PVector(330, 230));
+  statePositions.put("NE", new PVector(340, 275));
+  statePositions.put("KS", new PVector(340, 315));
+  statePositions.put("OK", new PVector(360, 360));
+  statePositions.put("TX", new PVector(340, 420));
+  
   statePositions.put("MN", new PVector(390, 200));
-  statePositions.put("IA", new PVector(380, 270));
-  statePositions.put("MO", new PVector(420, 320));
-  statePositions.put("AR", new PVector(410, 360));
-  statePositions.put("LA", new PVector(400, 420));
-
-  statePositions.put("WI", new PVector(440, 240));
-  statePositions.put("IL", new PVector(440, 280));
-  statePositions.put("MS", new PVector(450, 390));
-
+  statePositions.put("IA", new PVector(400, 265));
+  statePositions.put("MO", new PVector(415, 320));
+  statePositions.put("AR", new PVector(420, 370));
+  statePositions.put("LA", new PVector(420, 425));
+  
+  statePositions.put("WI", new PVector(440, 220));
+  statePositions.put("IL", new PVector(450, 285));
+  statePositions.put("MS", new PVector(455, 395));
+  
   statePositions.put("MI", new PVector(500, 220));
   statePositions.put("IN", new PVector(490, 280));
   statePositions.put("KY", new PVector(500, 320));
   statePositions.put("TN", new PVector(480, 340));
   statePositions.put("AL", new PVector(500, 400));
-
+  
   // EAST COAST
   statePositions.put("OH", new PVector(520, 280));
-  statePositions.put("WV", new PVector(560, 280));//missing
-  statePositions.put("VA", new PVector(620, 300));
-  statePositions.put("NC", new PVector(620, 340));
-  statePositions.put("SC", new PVector(620, 380));
+  statePositions.put("WV", new PVector(560, 300));
+  statePositions.put("VA", new PVector(600, 300));
+  statePositions.put("NC", new PVector(580, 340));
+  statePositions.put("SC", new PVector(580, 380));
   statePositions.put("GA", new PVector(540, 390));
   statePositions.put("FL", new PVector(540, 460));
-
-  statePositions.put("PA", new PVector(590, 260));
+  
+  statePositions.put("PA", new PVector(570, 260));
   statePositions.put("NY", new PVector(590, 220));
-  statePositions.put("VT", new PVector(680, 120));
-  statePositions.put("NH", new PVector(700, 140));
-  statePositions.put("ME", new PVector(740, 120));
-
-  statePositions.put("MA", new PVector(700, 180));
-  statePositions.put("CT", new PVector(680, 200));
-  statePositions.put("RI", new PVector(700, 200));
-  statePositions.put("NJ", new PVector(660, 220));
-  statePositions.put("DE", new PVector(660, 260));
-  statePositions.put("MD", new PVector(640, 260));
-
+  statePositions.put("VT", new PVector(600, 180));
+  statePositions.put("NH", new PVector(700, 160));
+  statePositions.put("ME", new PVector(640, 160));
+  
+  statePositions.put("MA", new PVector(700, 200));
+  statePositions.put("CT", new PVector(700, 280));
+  statePositions.put("RI", new PVector(700, 240));
+  statePositions.put("NJ", new PVector(700, 320));
+  statePositions.put("DE", new PVector(700, 360));
+  statePositions.put("MD", new PVector(700, 400));
+  
   // NON-CONTINENTAL
   statePositions.put("AK", new PVector(100, 500));
   statePositions.put("HI", new PVector(200, 500));
