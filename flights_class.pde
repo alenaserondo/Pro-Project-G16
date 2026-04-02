@@ -1,6 +1,134 @@
 
 // Wrote flight class - China Lynch 10/3/26 2:30pm
-class Flights  
+// Created search bar and drop down filter for dates - China
+
+// draw()
+// if (currentScreen == screens.get(2)) {
+//   drawFilterScreen();
+//}
+
+
+// Create date range filtering methods - China Lynch 24/03/26 3:30pm
+// Adds flights to new ArrayList if in date range
+ArrayList<Flights> listOfDateMatch(int startDate, int endDate)
+{
+  ArrayList<Flights> dateMatch = new ArrayList<Flights>();
+  for (Flights f : flights)   // Flights == type, flights == arrayList of flights
+  {
+    if (f.inRange(startDate, endDate))
+    {
+      dateMatch.add(f);
+    }
+  }
+  return dateMatch;
+}
+
+void drawFilterScreen() {
+
+  // labels
+  fill(0);
+  textSize(15);
+  text("Start Date (MMDDYYYY):", 50, 120);
+  text("End Date (MMDDYYYY):", 50, 170);
+
+  // search bars
+  drawSearchBars();
+  drawSearchBars();
+
+  // dropdown
+  drawDropdown();
+}
+
+void drawSearchBars() {
+  // Start search
+  fill(typingStart ? 220 : 240);
+  stroke(0);
+  rect(sx, sy, sw, sh);
+  fill(0);
+  text("Start Date (MMDDYYYY): " + startDateText, sx + 10, sy + 20);
+
+  // End search
+  fill(typingEnd ? 220 : 240);
+  stroke(0);
+  rect(ex, ey, sw, sh);
+  fill(0);
+  text("End Date (MMDDYYYY):   " + endDateText, ex + 10, ey + 20);
+}
+
+// dropdown display
+void drawDropdown() {
+  fill(240);
+  stroke(0);
+  rect(dx, dy, dw, dh);
+
+  fill(0);
+  if (selected == -1) text("Select flight", dx + 10, dy + 20);
+  else text(flightsDisplay.get(selected), dx + 10, dy + 20);
+
+  if (dropdownOpen) {
+    for (int i = 0; i < flightsDisplay.size(); i++) {
+      int iy = dy + dh * (i + 1);
+      fill(255);
+      rect(dx, iy, dw, dh);
+      fill(0);
+      text(flightsDisplay.get(i), dx + 10, iy + 20);
+    }
+  }
+}
+
+//void mousePressed()
+//{
+  
+//}
+
+// user entries
+void keyPressed() {
+
+  // when backspace pressed we delete
+  if (key == BACKSPACE) {
+    if (typingStart && startDateText.length() > 0)
+      startDateText = startDateText.substring(0, startDateText.length() - 1);
+
+    if (typingEnd && endDateText.length() > 0)
+      endDateText = endDateText.substring(0, endDateText.length() - 1);
+    return;
+  }
+
+  // Only ints allowed
+  if (key >= '0' && key <= '9') {
+
+    if (typingStart && startDateText.length() < 8)
+      startDateText += key;
+
+    if (typingEnd && endDateText.length() < 8)
+      endDateText += key;
+  }
+
+  // When both dates are 8 digits → filter
+  if (startDateText.length() == 8 && endDateText.length() == 8) {
+    filterFlights();
+  }
+}
+
+void filterFlights() {
+
+  flightsDisplay.clear();
+  filtered.clear();
+
+  int start = int(startDateText);
+  int end = int(endDateText);
+
+  filtered = listOfDateMatch(start, end);
+
+  for (Flights f : filtered) {
+    String label = f.airlineName() + "Departure: " + f.depTime + " " + f.date;
+    flightsDisplay.add(label);
+  }
+  selected = -1;
+  dropdownOpen = false;
+}
+
+class Flights
 {
   String date;
   int dateInt;
@@ -8,17 +136,13 @@ class Flights
   int schDepTime;
   int depTime;
   int status;
-  color statusCol; 
+  color statusCol;
   String message;
   String airlineName;
   int arrTime;
-color airlineColor;
-String origin;
-String destination;
-String flightNum;
+  color airlineColor;
 
- 
-  Flights(String airline, int status, String date, int depTime, int schDepTime, int arrTime, String origin, String destination, String flightNum) // new variables added  for display and filters - Nora Holden 25/03/2026
+  Flights(String airline, int status, String date, int depTime, int schDepTime, int arrTime)
   {
     this.status = status;
     this.date = date;
@@ -26,18 +150,15 @@ String flightNum;
     this.schDepTime = schDepTime;
     this.airline = airline;
     this.arrTime = arrTime;
-    this.origin = origin;
-    this.destination = destination;
-    this.flightNum = flightNum;
-    
+
     // convert date into int format MMDDYYYY
-    dateInt = int(date.replace("/",""));
+    dateInt = int(date.replace("/", ""));
   }
-  
+
   // Updated booleans to be boolean functions - China Lynch 10/3/26 7pm
   boolean cancelled()
   {
-  if (status == 1)
+    if (status == 1)
     {
       return true;
     } else
@@ -51,81 +172,77 @@ String flightNum;
   {
     return (depTime > schDepTime);
   }
-  
+
   // Checks if flight is in range of dates user gives
   boolean inRange(int startDate, int endDate)
   {
     return (dateInt >= startDate && dateInt <= endDate);
   }
 
-
-String airlineName() //Nora Holden
+  String airlineName()
   {
-     if( airline.equals("AA"))
+    if ( airline.equals("AA"))
     {
-      
+
       return airlineName = "American Airlines";
-    }
-    else if( airline.equals("AS"))
+    } else if ( airline.equals("AS"))
     {
       return airlineName = "Alaska Airlines";
-    }
-    else if( airline.equals("WN"))
+    } else if ( airline.equals("WN"))
     {
       return airlineName = "Southwest Airlines";
-    }
-    else if( airline.equals("B6"))
+    } else if ( airline.equals("B6"))
     {
       return airlineName = "Jet Blue Airlines";
-    }
-    else if( airline.equals("HA"))
+    } else if ( airline.equals("HA"))
     {
       return airlineName = "Hawaiian Airlines";
-    }
-        else if( airline.equals("NK"))
+    } else if ( airline.equals("NK"))
     {
       return airlineName = "Spirit Airlines";
-    }
-    else
+    } else
     {
-      return airlineName = "";
+      return airlineName = "name";
     }
-    
-    
   }
-  
-color airlineColour() //Nora Holden
+ color airlineColour()
 {
   if (airline.equals("AA"))
   {
+    // Muted deep red
     return airlineColor = color(160, 60, 70);
   } 
   else if (airline.equals("AS"))
   {
+    // Muted teal
     return airlineColor = color(60, 110, 120);
   } 
   else if (airline.equals("B6"))
   {
+    // Muted sky blue
     return airlineColor = color(120, 170, 185);
   } 
   else if (airline.equals("HA"))
   {
+    // Muted purple
     return airlineColor = color(130, 90, 150);
   } 
   else if (airline.equals("NK"))
   {
+    // Muted soft yellow
     return airlineColor = color(210, 210, 120);
   } 
   else
   {
+    // Muted blue (default)
     return airlineColor = color(80, 120, 160);
   }
 }
 
-  
+
   // Draws flight visualizations 16/03/2026 - Nora Holden
   // Updated draw method to display flight status - China Lynch 18/3/26 8:11pm
-  void drawFlightBox(int x,int y, int a , int b)
+  void drawFlightBox(int x, int y, int a, int b)
   {
     int hours = depTime / 100;
     int minutes = depTime % 100;
@@ -138,24 +255,23 @@ color airlineColour() //Nora Holden
     int w = 100;
     airlineColor = airlineColour();
     airlineName = airlineName();
-    
-    //updates to code to show locations - Nora Holden 22/03/2026
+
     //stroke(0);
     fill(177, 178, 179);
     rect(x, y, z - 40, w);//10,10,10,10
     fill(statusCol);
     rect(x +( z -40), y, 30, w);
     fill(airlineColor);
-    rect(x , y, 70, w);
+    rect(x, y, 70, w);
     fill(0);
-    text(airline , a - 5, b - 20);
-    text(airlineName , a + 120, b - 40);
+    text(airline, a - 5, b - 20);
+    text(airlineName, a + 120, b - 40);
     text( date, a +120, b - 0);
-    text( origin, a + 310, b - 40);
+    text( "loc1", a + 310, b - 40);
     text ( hours, a +300, b );
     text( ":", a+ 315, b );
     text(minutes, a + 330, b );
-    text( destination, a + 410, b - 40);
+    text( "loc2", a + 410, b - 40);
     text ( aHours, a +400, b );
     text( ":", a+ 415, b );
     text(aMins, a + 430, b );
@@ -165,39 +281,35 @@ color airlineColour() //Nora Holden
     text("h", a + 590, b - 20);
     rect( a +345, b - 1, a -50, 2);
 
-   // Fixed colour setting loops to work with functions - China Lynch 11/3/26 9pm
-   
-   // Rotate text - Nora Holden 18/03/2026
+    // Fixed colour setting loops to work with functions - China Lynch 11/3/26 9pm
+    // Rotate text - Nora Holden 18/03/2026
     if (late())
     {
-     statusCol = color(#FFA30D); // orange
-      pushMatrix();              
-      translate( x + ( z - 25), y + w/2);       
-      rotate(-HALF_PI); 
+      statusCol = color(#FFA30D); // orange
+      pushMatrix();
+      translate( x + ( z - 25), y + w/2);
+      rotate(-HALF_PI);
       fill(0);
-      text("DELAYED", 0,0);       
-      popMatrix(); 
-    }
-    else if (cancelled())
-    {
-      statusCol = color(#DB6161); // red
-      pushMatrix();              
-      translate( x + ( z - 25), y + w/2);       
-      rotate(-HALF_PI); 
-      fill(0);
-      text("CANCELLED", 0,0);       
+      text("LATE", 0, 0);
       popMatrix();
-    }
-    else
+    } else if (cancelled())
     {
-     statusCol = color(#73B497); // green
-      pushMatrix();              
-      translate( x + ( z - 25), y + w/2);       
-      rotate(-HALF_PI); 
+      statusCol = color(#FF0D0D); // red
+      pushMatrix();
+      translate( x + ( z - 25), y + w/2);
+      rotate(-HALF_PI);
       fill(0);
-      text("ON TIME", 0,0);
+      text("CANCELLED", 0, 0);
+      popMatrix();
+    } else
+    {
+      statusCol = color(#0DFF4A); // green
+      pushMatrix();
+      translate( x + ( z - 25), y + w/2);
+      rotate(-HALF_PI);
+      fill(0);
+      text("ON TIME", 0, 0);
       popMatrix();
     }
   }
-  
 }
