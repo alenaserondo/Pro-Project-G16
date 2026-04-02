@@ -972,7 +972,7 @@ void drawHeatMap()
   float handleY = legendY;
 
   fill(255, 0, 0);
-  stroke(0);
+  //stroke(0);
   rect(handleX, handleY, 10, legendHeight);
 
   fill(0);
