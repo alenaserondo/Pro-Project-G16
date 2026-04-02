@@ -1,6 +1,6 @@
 import java.util.HashSet;
 import controlP5.*;
-import java.util.*;//Alena now
+import java.util.*;
 
 // Wrote flight class - China Lynch 10/3/26 2:30pm
 // Created search bar and drop down filter for dates - China
@@ -281,7 +281,7 @@ void setup()
 
 
 
-///////////////////////////////////////////////////////////////DRAW//////////////////////////////////
+///////////////////////////////////////////////////////////////DRAW/////////////////////////////////////////////////////
 
 void draw()
 {
@@ -297,6 +297,8 @@ void draw()
   if (currentScreen == screens.get(1))
   {
     drawHeatMap();
+    airlineDDL.hide();
+  flightDDL.hide();
   }
 
   if (currentScreen == screens.get(3))
@@ -376,12 +378,9 @@ void draw()
       tempList.retainAll(filteredAirline);
     }
     
-    if (currentScreen == screens.get(3)) // only for date filter
-    {
-      if (startDateText.length() == 8 && endDateText.length() == 8)
-      {
-        tempList.retainAll(filtered);
-      }
+    // date filter - china 
+    if (endDateText.length() == 8) {
+      tempList.retainAll(filtered);
     }
     
 
@@ -431,13 +430,7 @@ void draw()
 }
 
 
-//void controlEvent(ControlEvent event)
-//{
-//  if (event.isFrom(statusDDL))
-//  {
-//    selectedStatus = int(event.getValue());
-//  }
-//}
+
 
 /////////////////////////////////////////////////////////////////////MOUSE AND KEY////////////////////////////////////////////////////////
 //Screens - Alyx Harmon
@@ -607,7 +600,7 @@ void drawSearchBars() {
   stroke(0);
   rect(sx, sy, sw, sh);
   fill(0);
-  text("Start Date (MMDDYYYY): ", sx + 100, sy - 20);
+  text("Start Date (YYYYMMDD): ", sx + 100, sy - 20);
   text(startDateText, sx + 100, sy + 15);
 
   // End search
@@ -615,18 +608,17 @@ void drawSearchBars() {
   stroke(0);
   rect(ex, ey, sw, sh);
   fill(0);
-  text("End Date (MMDDYYYY):   ", ex + 100, ey - 20);
-  text(endDateText, sx + 300, sy + 15);
+  text("End Date (YYYYMMDD):   ", ex + 100, ey - 20);
+  text(endDateText, ex + 100, sy + 15);
 }
 
 void drawFilterScreen() {
 
   // search bars
   drawSearchBars();
-
-  // dropdown
-  drawDropdown();
+  filterFlights();
 }
+
 
 
 // Create date range filtering methods - China Lynch 24/03/26 3:30pm
@@ -645,25 +637,25 @@ ArrayList<Flights> listOfDateMatch(int startDate, int endDate)
 }
 
 
-void drawDropdown() {
-  fill(240);
-  stroke(0);
-  rect(dx, dy, dw, dh);
+//void drawDropdown() {
+//  fill(240);
+//  stroke(0);
+//  rect(dx, dy, dw, dh);
 
-  fill(0);
-  if (selected == -1) text("Select flight", dx + 60, dy - 20);
-  else text(flightsDisplay.get(selected), dx + 10, dy + 20);
+//  fill(0);
+//  if (selected == -1) text("Select flight", dx + 60, dy - 20);
+//  else text(flightsDisplay.get(selected), dx + 10, dy + 20);
 
-  if (dropdownOpen) {
-    for (int i = 0; i < flightsDisplay.size(); i++) {
-      int iy = dy + dh * (i + 1);
-      fill(255);
-      rect(dx, iy, dw, dh);
-      fill(0);
-      text(flightsDisplay.get(i), dx + 10, iy + 20);
-    }
-  }
-}
+//  if (dropdownOpen) {
+//    for (int i = 0; i < flightsDisplay.size(); i++) {
+//      int iy = dy + dh * (i + 1);
+//      fill(255);
+//      rect(dx, iy, dw, dh);
+//      fill(0);
+//      text(flightsDisplay.get(i), dx + 10, iy + 20);
+//    }
+//  }
+//}
 
 //China Lynch
 void filterFlights() {
@@ -733,11 +725,13 @@ void customizeFlightDDL() {
 
 void controlEvent(ControlEvent theEvent) { 
   
+  //Alyx Harmon
    if (theEvent.isFrom(statusDDL))
   {
     selectedStatus = int(theEvent.getValue());
   }
   
+  //Alena 
 if (theEvent.getController().getName().equals("Airlines")) {
   int index = int(theEvent.getValue());
   String selectedCarrier = airlineCodes.get(index);
@@ -791,6 +785,7 @@ void filterByAirlineAndFlight(String airlineCode, String flightNum) {
 void setStatePostions()
 {
   // State positions - Liam 18/03/25 10pm
+  //Updated new co-ordinates to fit map better - Liam 01/04/2026
   // WEST
   statePositions.put("WA", new PVector(145, 160));
   statePositions.put("OR", new PVector(130, 210));
@@ -1025,3 +1020,5 @@ void updateSlider()
     minAirports = int(percent * maxValue);
   }
 }
+
+
