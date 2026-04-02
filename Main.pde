@@ -597,7 +597,7 @@ void keyPressed() {
 void drawSearchBars() {
   // Start search
   fill(typingStart ? 220 : 240);
-  stroke(0);
+  
   rect(sx, sy, sw, sh);
   fill(0);
   text("Start Date (YYYYMMDD): ", sx + 100, sy - 20);
@@ -605,11 +605,12 @@ void drawSearchBars() {
 
   // End search
   fill(typingEnd ? 220 : 240);
-  stroke(0);
+  
   rect(ex, ey, sw, sh);
   fill(0);
   text("End Date (YYYYMMDD):   ", ex + 100, ey - 20);
   text(endDateText, ex + 100, sy + 15);
+  noStroke();
 }
 
 void drawFilterScreen() {
@@ -637,25 +638,7 @@ ArrayList<Flights> listOfDateMatch(int startDate, int endDate)
 }
 
 
-//void drawDropdown() {
-//  fill(240);
-//  stroke(0);
-//  rect(dx, dy, dw, dh);
 
-//  fill(0);
-//  if (selected == -1) text("Select flight", dx + 60, dy - 20);
-//  else text(flightsDisplay.get(selected), dx + 10, dy + 20);
-
-//  if (dropdownOpen) {
-//    for (int i = 0; i < flightsDisplay.size(); i++) {
-//      int iy = dy + dh * (i + 1);
-//      fill(255);
-//      rect(dx, iy, dw, dh);
-//      fill(0);
-//      text(flightsDisplay.get(i), dx + 10, iy + 20);
-//    }
-//  }
-//}
 
 //China Lynch
 void filterFlights() {
