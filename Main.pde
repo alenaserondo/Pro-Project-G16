@@ -1,54 +1,7 @@
 import java.util.HashSet;
-import controlP5.*;
-import java.util.*;//Alena now
-
-// Wrote flight class - China Lynch 10/3/26 2:30pm
-// Created search bar and drop down filter for dates - China
-boolean dropdownOpen = false;
-int selected = -1;
-ArrayList<Flights> filtered = new ArrayList<Flights>();
-ArrayList<String> flightsDisplay = new ArrayList<String>();   // dropdown display
-ArrayList<Flights> filteredFlights = new ArrayList<Flights>(); // Alyx Harmon
-
-// dropdown pos
-int dx = 550, dy = 180, dw = 200, dh = 30;
-
-String startDateText = "";
-String endDateText = "";
-String enteredText = "";
-boolean typingStart = false;
-boolean typingEnd = false;
-boolean typingAirport = false;
-
-// search bar pos
-int sx = 60, sy = 180, sw = 200, sh = 30;
-int ex = 300;
-int ey = 180;
-
-//airport filter search box pos - NH
-int ax = 50;
-int ay = 170;
-int aw = 210;
-int ah = 50;
-
-ArrayList<Flights> listToShow;
-
-String selectedFlightNum = ""; //Alena filter
-HashMap<String, ArrayList<Airline>> flightsByAirline = new HashMap<String, ArrayList<Airline>>();
-DropdownList airlineDDL;// Alena now
-DropdownList flightDDL;// Alena now
-ArrayList<Flights> filteredAirline = new ArrayList<Flights>();
-ArrayList<String> airlineCodes = new ArrayList<String>(); //Alena now
-
-// alyx
-ControlP5 cp5;
-DropdownList statusDDL;
-
-int selectedStatus = -1;
 
 //data reading - Nora Holden 10/03/2026 2:25pm
 ArrayList<Flights> flights = new ArrayList<Flights>(); //creates an empty arraylist
-ArrayList<Flights> airportFilter = new ArrayList<Flights>(); // 25/03/2026 17:25 Nora Holden
 ArrayList<Airport> airport = new ArrayList<Airport>();
 ArrayList<Airline> airline = new ArrayList<Airline>();
 Table data;
@@ -58,56 +11,45 @@ Screen currentScreen;
 //date
 PImage homescreenIcon;
 
-
 //Alena - Scroll Logic 18.03.26
 HScrollbar hs;
 int visibleFlights = 3;
 boolean firstMousePress = false;
-
-
 
 //Heatmap - Liam McManus 18/03/2025 9:40pm
 HashMap<String, Integer> stateCount = new HashMap<String, Integer>();
 HashMap<String, PVector> statePositions = new HashMap<String, PVector>();
 HashSet<String> seenAirports = new HashSet<String>(); //hashSet like an array but doesn't allow duplicate values
 PImage usaMap;
-//heatmap interactive features added - Liam 25.03.2026 9pm
-String hoveredState = "";
-String selectedState = "";
-int minAirports = 0;
+
+// Drop-down flights
+boolean dropdownOpen = false;
+int selected = -1;
+ArrayList<Flights> filtered = new ArrayList<Flights>();
+ArrayList<String> flightsDisplay = new ArrayList<String>();   // dropdown display
+
+// dropdown pos
+int dx = 100, dy = 200, dw = 200, dh = 30;
+
+String startDateText = "";
+String endDateText = "";
+boolean typingStart = false;
+boolean typingEnd = false;
+
+// search bar pos
+int sx = 100, sy = 50, sw = 200, sh = 30;
+int ex = 100, ey = 100;
 
 
 void setup()
 {
   size(800, 600);
 
-  //drop down menu for status - Alyx Harmon 25/03/2026
-  cp5 = new ControlP5(this);
-  statusDDL = cp5.addDropdownList("Status Filter")
-    .setPosition(310, 170)
-    .setSize(200, 250)
-    .setItemHeight(20)
-    .setBarHeight(50)
-    .setColorBackground(color(255))
-    .setColorActive(color(255))
-    .setColorLabel(color(0))
-    .setColorValue(color(0))
-
-    .setColorForeground(color(200, 140, 160));
-
-
-  statusDDL.addItem("On Time", 0);
-  statusDDL.addItem("Cancelled", 1);
-  statusDDL.addItem("Delayed", 2);
-  statusDDL.addItem("All", 3);
-  statusDDL.close();
-
   homescreenIcon = loadImage("plane.png");// date
 
   hs = new HScrollbar(width - 30, 170, 16, 400, 10);
 
   //data reading - Nora Holden 10/03/2026 2:25pm
-  // new variables added  for display and filters - Nora Holden 25/03/2026
   data = loadTable("flights2k.csv", "header");
 
   for (TableRow row : data.rows())
@@ -119,11 +61,9 @@ void setup()
     int schDepTime = row.getInt("CRS_DEP_TIME");
     int arrTime = row.getInt("ARR_TIME");
     int status = row.getInt("CANCELLED");
-    String destination = row.getString("DEST");
-     String flightNum = row.getString("MKT_CARRIER_FL_NUM");
 
 
-    Flights flight = new Flights(airline, status, date, depTime, schDepTime, arrTime, origin, destination,flightNum); // creates an object of each flight using the data
+    Flights flight = new Flights(airline, status, date, depTime, schDepTime, arrTime); // creates an object of each flight using the data
     flights.add(flight); //adds the object to the arraylist
   }
 
@@ -157,639 +97,6 @@ void setup()
     }
   }
 
-  setStatePostions();
-
-  usaMap = loadImage("usaMap3.png");
-
-  //more reading added 9:34am - Nora Holden
-  for (TableRow row : data.rows())
-  {
-    String flightNum = row.getString("MKT_CARRIER"); //uses csv header names to find the specific data
-    String carrierCode = row.getString("MKT_CARRIER_FL_NUM");
-
-
-
-    Airline airlines = new Airline(flightNum, carrierCode); // creates an object of each airport using the data from the row
-    airline.add(airlines); //adds the object to the arraylist
-  }
-
-  //Screens - Alyx Harmon
-  // updated 16/03/2026
-  // updated & new screen added 26/3
-  screens = new ArrayList<Screen>();
-
-  // homescreen (0)
-
-  Screen homescreen = new HomeScreen(color(220, 200, 255));
-  homescreen.addWidget(new Button(50, 30, 200, 50, "Go to Map"));
-  homescreen.addWidget(new Button(300, 30, 200, 50, "Find Flights"));
-  homescreen.addWidget(new Button(550, 30, 200, 50, "Filter By Date"));
-
-  // map screen (1)
-
-  Screen mapScreen = new MapScreen(color(195, 240, 180));
-  mapScreen.addWidget(new Button(50, 30, 200, 50, "Back to Home"));
-  mapScreen.addWidget(new Button(300, 30, 200, 50, "Find Flights"));
-  mapScreen.addWidget(new Button(550, 30, 200, 50, "Filter By Date"));
-
-  // find flights screen (2)
-
-  Screen flightsScreen = new FlightScreen(color(240, 180, 200));
-  flightsScreen.addWidget(new Button(50, 30, 200, 50, "Back to Home"));
-  flightsScreen.addWidget(new Button(300, 30, 200, 50, "Go to Map"));
-  flightsScreen.addWidget(new Button(550, 30, 200, 50, "Filter By Date"));
-
-  // filter by date screen (3)
-  // added new screen 26/03/2026 - Alyx Harmon
-
-  Screen dateFilterScreen = new DateFilterScreen(color(180, 225, 255));
-  dateFilterScreen.addWidget(new Button(50, 30, 200, 50, "Back to Home"));
-  dateFilterScreen.addWidget(new Button(300, 30, 200, 50, "Go to Map"));
-  dateFilterScreen.addWidget(new Button(550, 30, 200, 50, "Find Flights"));
-
-  screens.add(homescreen);
-  screens.add(mapScreen);
-  screens.add(flightsScreen);
-  screens.add(dateFilterScreen);
-
-  currentScreen = homescreen;
-
-
-
-  //demonstration of data that has been read in (to consol) - Nora Holden 10/03/2026 2:25pm
-
-  for (Flights flight : flights) //loops through the objects
-  {
-    // prints data to the console
-    println("flight data : " + flight.airline + " + "  + flight.depTime + " + " + flight.date  + " + " + flight.schDepTime + " + " + flight.status);
-  }
-
-
-  for (Airport airports : airport)
-  {
-    println("airport data : " + airports.code + " + " + airports.city  + " + " + airports.state + " + " + airports.wac);
-  }
-
-  for (Airline airlines : airline)
-  {
-    println("airline data data : " + airlines.flightNum + " + " + airlines.carrierCode);
-  }
-
-  //Alena 26.03.26
-
-  cp5 = new ControlP5(this);
-
-  for (int i = 0; i < data.getRowCount(); i++) { //alena now
-    String flightNum = data.getString(i, "MKT_CARRIER_FL_NUM");
-    String carrier = data.getString(i, "MKT_CARRIER");
-
-    Airline a = new Airline(flightNum, carrier);
-    a.setFlightNum(flightNum);
-    a.setCarrierCode(carrier);
-
-    if (!flightsByAirline.containsKey(carrier)) { // if airline not seen before
-      flightsByAirline.put(carrier, new ArrayList<Airline>());  // add flight to that airline's list
-      airlineCodes.add(carrier);
-    }
-
-    flightsByAirline.get(carrier).add(a);
-  }
-
-  airlineDDL = cp5.addDropdownList("Airlines") //alena now
-    .setPosition(550, 150)
-    .setSize(200, 400);
-
-
-  flightDDL = cp5.addDropdownList("Flights") // alena now
-    .setPosition(550, 200)
-    .setSize(200, 200);
-
-
-  customizeAirlineDDL();
-
-  customizeFlightDDL();
-
-
-  airlineDDL.close();
-  flightDDL.close();
-
-  airlineDDL.hide();
-  flightDDL.hide();
-  
-}
-
-
-
-
-///////////////////////////////////////////////////////////////DRAW//////////////////////////////////
-
-void draw()
-{
-
-  background(255);
-
-  statusDDL.hide();
-
-  //Screens - Alyx Harmon
-
-  currentScreen.draw();
-
-  if (currentScreen == screens.get(1))
-  {
-    drawHeatMap();
-  }
-
-  if (currentScreen == screens.get(3))
-  {
-    drawFilterScreen();
-    airlineDDL.hide();
-  flightDDL.hide();
-  }
-
-
-  if (currentScreen == screens.get(2))
-  {
-    // status filter - alyx harmon 25/3 8.50pm
-    statusDDL.show();
-    airlineDDL.show();
-    flightDDL.show();
-
-    filteredFlights.clear();
-
-
-    for (Flights f : flights)
-    {
-      boolean matches = true;
-
-      if (selectedStatus == 0)
-      {
-        if (f.depTime != f.schDepTime || f.status == 1)
-        {
-          matches = false;
-        }
-      } else if (selectedStatus == 1)
-      {
-        if (f.status != 1)
-        {
-          matches = false;
-        }
-      } else if (selectedStatus == 2)
-      {
-        if (f.depTime <= f.schDepTime || f.status == 1)
-        {
-          matches = false;
-        }
-      }
-
-      if (matches)
-      {
-        filteredFlights.add(f);
-      }
-    }
-  }
-
-
-  // ensuring they display on the correct screen when the user selects a screen  17/03/2026 - Nora Holden
-  if (currentScreen == screens.get(2) || currentScreen == screens.get(3)  )
-  {
-    hs.update();
-    hs.display();
-    fill(255);
-
-    // implementing all filters to work together (simultaneously) - Nora Holden 30/03/2026 14:53pm
-    ArrayList<Flights> tempList = new ArrayList<Flights>(flights); //new list to combine all aplicable filters
-
-    listToShow = flights; // logic to update flights when a filter is selected - Nora Holden 25/03/2026
-
-    if (selectedStatus != -1)
-    {
-      tempList.retainAll(filteredFlights); // all flights from temp list that are also in filteredFlights list stay in the temp list
-    }
-
-    if (enteredText.length() > 0)
-    {
-      tempList.retainAll(airportFilter);
-    }
-    
-    if(filteredAirline.size() > 0)
-    {
-      tempList.retainAll(filteredAirline);
-    }
-    
-    if (currentScreen == screens.get(3)) // only for date filter
-    {
-      if (startDateText.length() == 8 && endDateText.length() == 8)
-      {
-        tempList.retainAll(filtered);
-      }
-    }
-    
-
-    listToShow = tempList;
-
-
-
-    //Alena - Scroll Logic 18.03.26
-    float scrollPercent = hs.getPercent();
-    int maxStart = listToShow.size() - visibleFlights;
-
-    if (maxStart < 0)
-    {
-      maxStart = 0;
-    }
-
-
-    int startIndex = int(scrollPercent * maxStart);
-
-    // draws flights - Nora Holden 16/03/2026
-    int y = 240;
-    int x = 50;
-    int a = 90;
-    int b = 310;
-    for (int i = 0; i < visibleFlights; i++)
-    {
-      int index = startIndex + i;
-
-      if (index < listToShow.size())
-      {
-        Flights flight = listToShow.get(index);
-        flight.drawFlightBox(x, y, a, b);
-
-        y += 120;
-        b += 120;
-      }
-    }
-  } else
-  {
-    statusDDL.hide();
-  }
-
-  if (firstMousePress)
-  {
-    firstMousePress = false;
-  }
-}
-
-
-//void controlEvent(ControlEvent event)
-//{
-//  if (event.isFrom(statusDDL))
-//  {
-//    selectedStatus = int(event.getValue());
-//  }
-//}
-
-/////////////////////////////////////////////////////////////////////MOUSE AND KEY////////////////////////////////////////////////////////
-//Screens - Alyx Harmon
-void mousePressed()
-{
-  //alena
-  firstMousePress = true;
-
-  Button b = currentScreen.getButton(mouseX, mouseY);
-
-  if (b != null)
-  {
-    if (b.label.equals("Go to Map"))
-      currentScreen = screens.get(1);
-    else if (b.label.equals("Find Flights"))
-      currentScreen = screens.get(2);
-    else if (b.label.equals("Back to Home"))
-      currentScreen = screens.get(0);
-    else if (b.label.equals("Filter By Date"))
-      currentScreen = screens.get(3);
-  }
-
-
-  //slider for heat map - Liam McManus
-  if (currentScreen == screens.get(1))
-  {
-    updateSlider();
-    for (String state : statePositions.keySet())
-    {
-      PVector pos = statePositions.get(state);
-      int squareLength = 35;
-      if (mouseX > pos.x && mouseX < pos.x + squareLength &&
-        mouseY > pos.y && mouseY < pos.y + squareLength)
-      {
-        if (selectedState.equals(state))
-        {
-          selectedState = "";
-        } else
-        {
-          selectedState = state;
-        }
-      }
-    }
-  }
-
-  // searching flight dates - China Lynch
-  if (currentScreen == screens.get(3)) {
-
-    // mouse click start search box
-    if (mouseX > sx && mouseX < sx + sw && mouseY > sy && mouseY < sy + sh) {
-      typingStart = true;
-      typingEnd = false;
-      typingAirport = false;
-      return;
-    }
-
-    // end
-    if (mouseX > ex && mouseX < ex + sw && mouseY > ey && mouseY < ey + sh) {
-      typingEnd = true;
-      typingStart = false;
-      typingAirport = false;
-      return;
-    }
-  }
-
-  //boolean added for airport - Nora Holden 26/03/2026 9:46am
-  if (currentScreen == screens.get(2)) {
-    if (mouseX > ax && mouseX < ax + aw && mouseY > ay && mouseY < ay + ah) {
-      typingStart = false;
-      typingEnd = false;
-      typingAirport = true;
-      return;
-    }
-  }
-
-  if (currentScreen == screens.get(2)) {
-    // clicking on dropdown box
-    if (mouseX > dx && mouseX < dx + dw && mouseY > dy && mouseY < dy + dh) {
-      dropdownOpen = !dropdownOpen;
-      return;
-    }
-
-    // dropdown selection
-    if (dropdownOpen) {
-      for (int i = 0; i < flightsDisplay.size(); i++) {
-        int iy = dy + dh * (i + 1);
-        if (mouseX > dx && mouseX < dx + dw && mouseY > iy && mouseY < iy + dh) {
-          selected = i;
-          dropdownOpen = false;
-          return;
-        }
-      }
-      dropdownOpen = false;
-    }
-  }
-}
-
-void mouseDragged()
-{
-  updateSlider();
-}
-
-//takes in written input - Nora Holden and China Lynch ( two methods merged )
-void keyPressed() {
-
-
-  // when backspace pressed we delete - China Lynch
-  if (key == BACKSPACE) {
-    if (typingStart && startDateText.length() > 0)
-      startDateText = startDateText.substring(0, startDateText.length() - 1);
-
-    if (typingEnd && endDateText.length() > 0)
-      endDateText = endDateText.substring(0, endDateText.length() - 1);
-
-
-    if (typingAirport && enteredText.length() > 0)
-      enteredText = enteredText.substring(0, enteredText.length() - 1);
-    return;
-  }
-
-  // Only ints allowed and booleans - China Lynch
-  if (key >= '0' && key <= '9') {
-
-    if (typingStart && startDateText.length() < 8)
-      startDateText += key;
-
-    if (typingEnd && endDateText.length() < 8)
-      endDateText += key;
-  } else // Airport filter on second screen text input - Nora Holden 24/03/2026
-  {
-    if (typingAirport)
-    {
-      if (currentScreen == screens.get(2) )
-      {
-        if (keyCode == BACKSPACE) {
-          if (enteredText.length() > 0) {
-            enteredText = enteredText.substring(0, enteredText.length()-1);
-          }
-        } else if (keyCode == DELETE) {
-          enteredText = "";
-        } else if (keyCode != SHIFT && keyCode != CONTROL && keyCode != ALT && keyCode != ENTER) {
-          enteredText = enteredText + key;
-        }
-      }
-    }
-  }
-
-
-  // When both dates are 8 digits → filter - China Lynch
-  if (currentScreen == screens.get(3)) {
-    if (startDateText.length() == 8 && endDateText.length() == 8) {
-      filterFlights();
-    }
-  }
-
-  //Nora Holden
-  if (currentScreen == screens.get(2)) {
-    airportFilter();
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////FILTERS//////////////////////////////////////////////////////////////
-//China Lynch
-void drawSearchBars() {
-  // Start search
-  fill(typingStart ? 220 : 240);
-  stroke(0);
-  rect(sx, sy, sw, sh);
-  fill(0);
-  text("Start Date (MMDDYYYY): ", sx + 100, sy - 20);
-  text(startDateText, sx + 100, sy + 15);
-
-  // End search
-  fill(typingEnd ? 220 : 240);
-  stroke(0);
-  rect(ex, ey, sw, sh);
-  fill(0);
-  text("End Date (MMDDYYYY):   ", ex + 100, ey - 20);
-  text(endDateText, sx + 300, sy + 15);
-}
-
-void drawFilterScreen() {
-
-  // search bars
-  drawSearchBars();
-
-  // dropdown
-  drawDropdown();
-}
-
-
-// Create date range filtering methods - China Lynch 24/03/26 3:30pm
-// Adds flights to new ArrayList if in date range
-ArrayList<Flights> listOfDateMatch(int startDate, int endDate)
-{
-  ArrayList<Flights> dateMatch = new ArrayList<Flights>();
-  for (Flights f : flights)   // Flights == type, flights == arrayList of flights
-  {
-    if (f.inRange(startDate, endDate))
-    {
-      dateMatch.add(f);
-    }
-  }
-  return dateMatch;
-}
-
-
-void drawDropdown() {
-  fill(240);
-  stroke(0);
-  rect(dx, dy, dw, dh);
-
-  fill(0);
-  if (selected == -1) text("Select flight", dx + 60, dy - 20);
-  else text(flightsDisplay.get(selected), dx + 10, dy + 20);
-
-  if (dropdownOpen) {
-    for (int i = 0; i < flightsDisplay.size(); i++) {
-      int iy = dy + dh * (i + 1);
-      fill(255);
-      rect(dx, iy, dw, dh);
-      fill(0);
-      text(flightsDisplay.get(i), dx + 10, iy + 20);
-    }
-  }
-}
-
-//China Lynch
-void filterFlights() {
-
-  flightsDisplay.clear();
-  filtered.clear();
-
-  int start = int(startDateText);
-  int end = int(endDateText);
-
-  filtered = listOfDateMatch(start, end);
-
-  for (Flights f : filtered) {
-    String label = f.airlineName() + "Departure: " + f.depTime + " " + f.date;
-    flightsDisplay.add(label);
-  }
-  selected = -1;
-  dropdownOpen = false;
-}
-
-
-
-// filters flights to be printed based on inputted text - Nora Holden 25/03/2026
-void airportFilter()
-{
-  airportFilter.clear(); // resets the arraylist
-
-  for (Flights flight : flights)
-  {
-    if (flight.origin.equalsIgnoreCase(enteredText))
-    {
-      airportFilter.add(flight);
-    }
-  }
-}
-
-//Alena 26.03.26
-
-void customizeAirlineDDL() { 
-  airlineDDL.setColorForeground(color(0)); // border? 
- airlineDDL.setColorBackground(color(255));   // main bar 183, 144, 212
-  airlineDDL.setBackgroundColor(color(220, 200, 240));   // dropdown list (lighter)
-  airlineDDL.setColorForeground(color(160, 120, 200));   // hover
-  airlineDDL.setColorActive(color(0));       // clicked
-  airlineDDL.setColorLabel(color(0));                    // text
-  airlineDDL.setColorValue(color(0));
-
-  airlineDDL.setItemHeight(30);
-  airlineDDL.setBarHeight(30);  
-
-  for (int i = 0; i < airlineCodes.size(); i++) {
-    airlineDDL.addItem(airlineCodes.get(i), i);
-  }
-}
-
-void customizeFlightDDL() { 
-  flightDDL.setColorForeground(color(0)); // border?
-  flightDDL.setColorBackground(color(255));   // same base   183, 144, 212
-  flightDDL.setBackgroundColor(color(220, 200, 240));   // lighter list
-  flightDDL.setColorForeground(color(160, 120, 200));   // hover
-  flightDDL.setColorActive(color(140, 100, 190));       // clicked
-  flightDDL.setColorLabel(color(0));
-  flightDDL.setColorValue(color(0));
-  flightDDL.setItemHeight(30);
-  flightDDL.setBarHeight(30);
-}
-
-void controlEvent(ControlEvent theEvent) { 
-  
-   if (theEvent.isFrom(statusDDL))
-  {
-    selectedStatus = int(theEvent.getValue());
-  }
-  
-if (theEvent.getController().getName().equals("Airlines")) {
-  int index = int(theEvent.getValue());
-  String selectedCarrier = airlineCodes.get(index);
-
-
-  // populate flight dropdown
-  ArrayList<Airline> flightsList = flightsByAirline.get(selectedCarrier);
-  flightDDL.clear();
-  for (int i = 0; i < flightsList.size(); i++) {
-    flightDDL.addItem(flightsList.get(i).getFlightNum(), i);
-  }
-
-  // filter by airline only for now
-  filteredAirline.clear();
-  for (Flights f : flights) {
-    if (f.airline.equalsIgnoreCase(selectedCarrier)) {
-      filteredAirline.add(f);
-    }
-  }
-}
-
-if (theEvent.getController().getName().equals("Flights")) {
-  int flightIndex = int(theEvent.getValue());
-
-  // get selected airline
-  int airlineIndex = int(airlineDDL.getValue());
-  String selectedCarrier = airlineCodes.get(airlineIndex);
-
-  ArrayList<Airline> flightsList = flightsByAirline.get(selectedCarrier);
-  String selectedFlightNum = flightsList.get(flightIndex).getFlightNum();
-
-  // filter by BOTH airline and flight number
-  filterByAirlineAndFlight(selectedCarrier, selectedFlightNum);
-}
-}
-
-void filterByAirlineAndFlight(String airlineCode, String flightNum) {
-  filteredAirline.clear(); // reset filtered list
-
-  for (Flights f : flights) {
-    if (f.airline.equalsIgnoreCase(airlineCode) && f.flightNum.equals(flightNum)) {
-      filteredAirline.add(f);
-    }
-  }
-}
-
-
-
-//////////////////////////////////////////////////////////////////////////////////MAP//////////////////////////////////////
-
-void setStatePostions()
-{
   // State positions - Liam 18/03/25 10pm
   // WEST
   statePositions.put("WA", new PVector(120, 150));
@@ -811,23 +118,23 @@ void setStatePostions()
   statePositions.put("KS", new PVector(320, 280)); // missing
   statePositions.put("OK", new PVector(320, 340));
   statePositions.put("TX", new PVector(320, 420));
-
+  
   statePositions.put("MN", new PVector(390, 200));
   statePositions.put("IA", new PVector(380, 270));
   statePositions.put("MO", new PVector(420, 320));
   statePositions.put("AR", new PVector(410, 360));
   statePositions.put("LA", new PVector(400, 420));
-
+  
   statePositions.put("WI", new PVector(440, 240));
   statePositions.put("IL", new PVector(440, 280));
   statePositions.put("MS", new PVector(450, 390));
-
+  
   statePositions.put("MI", new PVector(500, 220));
   statePositions.put("IN", new PVector(490, 280));
   statePositions.put("KY", new PVector(500, 320));
   statePositions.put("TN", new PVector(480, 340));
   statePositions.put("AL", new PVector(500, 400));
-
+  
   // EAST COAST
   statePositions.put("OH", new PVector(520, 280));
   statePositions.put("WV", new PVector(560, 280));//missing
@@ -836,34 +143,216 @@ void setStatePostions()
   statePositions.put("SC", new PVector(620, 380));
   statePositions.put("GA", new PVector(540, 390));
   statePositions.put("FL", new PVector(540, 460));
-
+  
   statePositions.put("PA", new PVector(590, 260));
   statePositions.put("NY", new PVector(590, 220));
   statePositions.put("VT", new PVector(680, 120));
   statePositions.put("NH", new PVector(700, 140));
   statePositions.put("ME", new PVector(740, 120));
-
+  
   statePositions.put("MA", new PVector(700, 180));
   statePositions.put("CT", new PVector(680, 200));
   statePositions.put("RI", new PVector(700, 200));
   statePositions.put("NJ", new PVector(660, 220));
   statePositions.put("DE", new PVector(660, 260));
   statePositions.put("MD", new PVector(640, 260));
-
+  
   // NON-CONTINENTAL
   statePositions.put("AK", new PVector(100, 500));
   statePositions.put("HI", new PVector(200, 500));
+
+  usaMap = loadImage("usaMap3.png");
+
+  //more reading added 9:34am - Nora Holden
+  for (TableRow row : data.rows())
+  {
+    String flightNum = row.getString("MKT_CARRIER"); //uses csv header names to find the specific data
+    String carrierCode = row.getString("MKT_CARRIER_FL_NUM");
+
+
+
+    Airline airlines = new Airline(flightNum, carrierCode); // creates an object of each airport using the data from the row
+    airline.add(airlines); //adds the object to the arraylist
+  }
+
+  //Screens - Alyx Harmon
+  // updated 16/03/2026
+  screens = new ArrayList<Screen>();
+
+  // homescreen (0)
+
+  Screen homescreen = new HomeScreen(color(220, 200, 255));
+  homescreen.addWidget(new Button(50, 30, 325, 50, "Go to Map"));
+  homescreen.addWidget(new Button(width - 325 - 50, 30, 325, 50, "Find Flights"));
+
+  // map screen (1)
+
+  Screen mapScreen = new MapScreen(color(195, 240, 180));
+  mapScreen.addWidget(new Button(50, 30, 325, 50, "Back to Home"));
+  mapScreen.addWidget(new Button(width - 325 - 50, 30, 325, 50, "Find Flights"));
+
+  // find flights screen (2)
+
+  Screen flightsScreen = new FlightScreen(color(240, 180, 200));
+  flightsScreen.addWidget(new Button(50, 30, 325, 50, "Back to Home"));
+  flightsScreen.addWidget(new Button(width - 325 - 50, 30, 325, 50, "Go to Map"));
+
+  screens.add(homescreen);
+  screens.add(mapScreen);
+  screens.add(flightsScreen);
+
+  currentScreen = homescreen;
+
+
+
+  //demonstration of data that has been read in - Nora Holden 10/03/2026 2:25pm
+
+
+
+  for (Flights flight : flights) //loops through the objects
+  {
+    // prints data to the console
+    println("flight data : " + flight.airline + " + "  + flight.depTime + " + " + flight.date  + " + " + flight.schDepTime + " + " + flight.status);
+  }
+
+
+  for (Airport airports : airport)
+  {
+    println("airport data : " + airports.code + " + " + airports.city  + " + " + airports.state + " + " + airports.wac);
+  }
+
+  for (Airline airlines : airline)
+  {
+    println("airline data data : " + airlines.flightNum + " + " + airlines.carrierCode);
+  }    
 }
 
 
-// draw heatmap function - Liam 18/03/26 10pm
-// heatmap appearence updated and now also includes states with zero airports - Liam 19/03/2026 1:45pm
-// interactive features added to heatmap (hover over state for more info) - Liam 25/03/2026 9pm
+
+
+void draw()
+{
+
+  background(255);
+
+  //Screens - Alyx Harmon
+
+  currentScreen.draw();
+  
+  if (currentScreen == screens.get(2)) {
+    drawFilterScreen();
+  }
+  
+  if (currentScreen == screens.get(1))
+  {
+    drawHeatMap();
+  }
+  // ensuring they only display when the user selects the "find flights" screen  17/03/2026 - Nora Holden
+  if (currentScreen == screens.get(2))
+  {
+    //Alena
+    hs.update();
+    hs.display();
+
+    float scrollPercent = hs.getPercent();
+    int maxStart = flights.size() - visibleFlights;
+
+    if (maxStart < 0)
+    {
+      maxStart = 0;
+    }
+
+    //Alena - Scroll Logic 18.03.26
+    int startIndex = int(scrollPercent * maxStart);
+
+    int y = 240;
+    int x = 50;
+    int a = 90;
+    int b = 310;
+    for (int i = 0; i < visibleFlights; i++)
+    {
+      int index = startIndex + i;
+
+      if (index < flights.size())
+      {
+        Flights flight = flights.get(index);
+        flight.drawFlightBox(x, y, a, b); // draws flights - Nora Holden
+
+        y += 120;
+        b += 120;
+      }
+    }
+  }
+
+  if (firstMousePress)
+  {
+    firstMousePress = false;
+  }
+}
+
+
+//Screens - Alyx Harmon
+void mousePressed()
+{
+  //alena
+  firstMousePress = true;
+
+  Button b = currentScreen.getButton(mouseX, mouseY);
+
+  if (b != null)
+  {
+    if (b.label.equals("Go to Map"))
+      currentScreen = screens.get(1);
+    else if (b.label.equals("Find Flights"))
+      currentScreen = screens.get(2);
+    else if (b.label.equals("Back to Home"))
+      currentScreen = screens.get(0);
+  }
+  
+// searching flight dates
+  if (currentScreen == screens.get(2)) {
+
+    // mouse click start search box
+    if (mouseX > sx && mouseX < sx + sw && mouseY > sy && mouseY < sy + sh) {
+      typingStart = true;
+      typingEnd = false;
+      return;
+    }
+
+    // end
+    if (mouseX > ex && mouseX < ex + sw && mouseY > ey && mouseY < ey + sh) {
+      typingEnd = true;
+      typingStart = false;
+      return;
+    }
+
+    // clicking on dropdown box
+    if (mouseX > dx && mouseX < dx + dw && mouseY > dy && mouseY < dy + dh) {
+      dropdownOpen = !dropdownOpen;
+      return;
+    }
+
+    // dropdown selection
+    if (dropdownOpen) {
+      for (int i = 0; i < flightsDisplay.size(); i++) {
+        int iy = dy + dh * (i + 1);
+        if (mouseX > dx && mouseX < dx + dw && mouseY > iy && mouseY < iy + dh) {
+          selected = i;
+          dropdownOpen = false;
+          return;
+        }
+      }
+      dropdownOpen = false;
+    }
+  }
+}
+
+// draw heatmap function - Liam 18/03/25 10pm
 void drawHeatMap()
 {
 
   image(usaMap, 0, 140, width -100, height -200);
-
+  
   int squareLength = 35;
   int maxValue = 0;
   int minIntensity = 100;
@@ -872,87 +361,27 @@ void drawHeatMap()
     if (value> maxValue) maxValue = value;
   }
 
-  for (String state : statePositions.keySet())
+  for (String state : stateCount.keySet())
   {
-    int count = 0;
-    if (stateCount.containsKey(state))
-    {
-      count = stateCount.get(state);
-    }
-    if (count < minAirports)
-    {
-      continue;
-    }
+    if (!statePositions.containsKey(state)) continue;
+    int count = stateCount.get(state);
     PVector pos = statePositions.get(state);
 
 
 
     float intensity = map(count, 0, maxValue, minIntensity, 255);
-    fill(intensity, 0, 255);
+    fill(0, intensity, 0);
     rect(pos.x, pos.y, squareLength, squareLength);
 
     fill(0);
     textAlign(CENTER, CENTER);
     textSize(12);
     text(state, pos.x + squareLength/2, pos.y + squareLength/2);
-
-    if (mouseX > pos.x && mouseX < pos.x + squareLength
-      && mouseY > pos.y && mouseY < pos.y + squareLength)
-    {
-      hoveredState = state;
-    }
-  }
-
-  if (hoveredState != "")
-  {
-    int count = 0;
-    if (stateCount.containsKey(hoveredState))
-    {
-      count = stateCount.get(hoveredState);
-    }
-
-    fill(255);
-    stroke(150);
-    rect(mouseX, mouseY-25, 140, 25);
-
-    fill(0);
-    textAlign(LEFT, CENTER);
-    textSize(16);
-    text(hoveredState + ": " + count + " airports", mouseX + 5, mouseY - 12);
-    hoveredState = "";
-  }
-
-  if (selectedState != "")
-  {
-    stroke (0);
-
-
-    for (TableRow row : data.rows())
-    {
-      String originState = row.getString("ORIGIN_STATE_ABR");
-      String destState = row.getString("DEST_STATE_ABR");
-
-      if (originState.equals(selectedState))
-      {
-        if (statePositions.containsKey(destState))
-        {
-          PVector start = statePositions.get(originState);
-          PVector end = statePositions.get(destState);
-
-          noFill();
-          bezier(start.x + squareLength /2, start.y + squareLength / 2,
-            start.x, start.y - 50,
-            end.x, end.y-50,
-            end.x + squareLength / 2, end.y );
-        }
-      }
-    }
   }
   fill(0);
-  textAlign(CENTER, CENTER);
-  textSize(26);
-
-  text("Airports per State Heatmap", 410, 120);
+  textSize(20);
+  textAlign(LEFT);
+  text("Airports per State Heatmap", 50, 120);
 
   // gradient legend added - Liam 19/03/25 8:20 am
   //draw map legend
@@ -967,12 +396,11 @@ void drawHeatMap()
     float value = map(i, 0, legendWidth, 0, maxValue);
     float intensity = map(value, 0, maxValue, minIntensity, 255);
 
-    stroke(intensity, 0, 255);
+    stroke(0, intensity, 0);
     line(legendX + i, legendY, legendX + i, legendY + legendHeight);
   }
 
   noStroke();
-
 
   //border around legend
   noFill();
@@ -988,40 +416,5 @@ void drawHeatMap()
   text("0", legendX, legendY + legendHeight + 15);
   text(maxValue, legendX + legendWidth, legendY + legendHeight + 15);
 
-  // slider added - Liam 26/03/2026 11pm
-  float handleX = map(minAirports, 0, maxValue, legendX, legendX + legendWidth);
-  float handleY = legendY;
-
-  fill(255, 0, 0);
-  stroke(0);
-  rect(handleX, handleY, 10, legendHeight);
-
-  fill(0);
-  textAlign(CENTER);
-  textSize(14);
-  text("Min Airports: " + minAirports, legendX + legendWidth/2, legendY - 25);
-
-
   text("Number of Airports", legendX + legendWidth/2, legendY - 10);
-}
-
-void updateSlider()
-{
-  int legendX = 300;
-  int legendY = 540;
-  int legendWidth = 300;
-
-  if (mouseX> legendX && mouseX < legendX + legendWidth &&
-    mouseY > legendY && mouseY < legendY + 20)
-  {
-    float percent = map(mouseX, legendX, legendX + legendWidth, 0, 1.01);
-
-    int maxValue = 0;
-    for (int value : stateCount.values())
-    {
-      if (value>maxValue) maxValue = value;
-    }
-
-    minAirports = int(percent * maxValue);
-  }
 }
