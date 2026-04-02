@@ -4,6 +4,8 @@ class Flights
 {
   String date;
   int dateInt;
+  int dateSorted;
+  String dateOnly;
   String airline;
   int schDepTime;
   int depTime;
@@ -30,8 +32,23 @@ String flightNum;
     this.destination = destination;
     this.flightNum = flightNum;
     
-    // convert date into int format MMDDYYYY
-    dateInt = int(date.replace("/",""));
+    //Fix date filter - China Lynch 31/03/2026
+    dateOnly = date.split(" ")[0]; // remove extras
+    try {
+      String[] parts = split(dateOnly, '/'); 
+      if(parts.length == 3) {
+        // MM/DD/YYYY -> YYYYMMDD
+        this.dateInt = int(parts[2] + parts[0] + parts[1]);
+      }
+    } catch (Exception e) {
+      this.dateInt = 0; 
+    }
+  }
+  
+  // Checks if flight is in range of dates user gives
+  boolean inRange(int start, int end) 
+  {
+    return (dateInt >= start && dateInt <= end);
   }
   
   // Updated booleans to be boolean functions - China Lynch 10/3/26 7pm
@@ -52,11 +69,7 @@ String flightNum;
     return (depTime > schDepTime);
   }
   
-  // Checks if flight is in range of dates user gives
-  boolean inRange(int startDate, int endDate)
-  {
-    return (dateInt >= startDate && dateInt <= endDate);
-  }
+ 
 
 
 String airlineName() //Nora Holden
@@ -85,6 +98,22 @@ String airlineName() //Nora Holden
         else if( airline.equals("NK"))
     {
       return airlineName = "Spirit Airlines";
+    }
+    else if( airline.equals("G4"))
+    {
+      return airlineName = "Allegiant Air"; //Added missing airlines - Alena 01/04/2026 
+    }
+    else if( airline.equals("F9"))
+    {
+      return airlineName = "Frontier Airlines";
+    }
+     else if( airline.equals("DL"))
+    {
+      return airlineName = "Delta Air Lines";
+    }
+     else if( airline.equals("UA"))
+    {
+      return airlineName = "United Airlines";
     }
     else
     {
@@ -116,6 +145,22 @@ color airlineColour() //Nora Holden
   {
     return airlineColor = color(210, 210, 120);
   } 
+  else if (airline.equals("G4"))    //Added missing airlines - Alena 01/04/2026 
+  {
+    return airlineColor = color(170, 173, 64);
+  }
+  else if( airline.equals("F9"))
+    {
+      return airlineColor = color(64, 128, 69);
+    }
+     else if( airline.equals("DL"))
+    {
+      return airlineColor = color(189, 72, 89);
+    }
+    else if( airline.equals("UA"))
+    {
+      return airlineColor = color(84, 160, 184);
+    }
   else
   {
     return airlineColor = color(80, 120, 160);
@@ -129,11 +174,13 @@ color airlineColour() //Nora Holden
   {
     int hours = depTime / 100;
     int minutes = depTime % 100;
-    int length = abs(arrTime  - depTime);
-    int lHours = length / 100;
-    int lMinutes = length % 100;
+    
     int aHours = arrTime / 100;
     int aMins = arrTime % 100;
+    int lengthH = abs(aHours  - hours); // updated logic to fix calculation error , was showing times not possible e.g. 17:92 - Nora Holden 01/04/2026
+    int lengthM = abs(aMins - minutes);
+    //int lHours = length / 100;
+    //int lMinutes = length % 100;
     int z = 700;
     int w = 100;
     airlineColor = airlineColour();
@@ -159,9 +206,21 @@ color airlineColour() //Nora Holden
     text ( aHours, a +400, b );
     text( ":", a+ 415, b );
     text(aMins, a + 430, b );
-    text(lHours, a + 550, b - 20);
+     if (cancelled())  // updated to show differnce if cancelled - Nora Holden 01/04/2026
+    {
+      text ( "----", a + 560, b - 20);
+    }
+    else{
+    text(lengthH, a + 550, b - 20);
     text( ":", a+ 560, b - 20 );
-    text(lMinutes, a + 575, b - 20);
+    if(lengthM < 10) // fixed logic so if the flight is less than ten minutes it appears in the correct form e.g. 10:07 not 10: 7 - Nora Holden 01/04/2026
+    {
+      text("0" + lengthM, a + 575, b - 20);
+    }
+    else {
+    text(lengthM, a + 575, b - 20);}
+    
+    }
     text("h", a + 590, b - 20);
     rect( a +345, b - 1, a -50, 2);
 
