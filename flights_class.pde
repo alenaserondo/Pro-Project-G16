@@ -186,6 +186,7 @@ color airlineColour() //Nora Holden
     airlineColor = airlineColour();
     airlineName = airlineName();
     
+      
     //updates to code to show locations - Nora Holden 22/03/2026
     //stroke(0);
     fill(177, 178, 179);
@@ -205,13 +206,23 @@ color airlineColour() //Nora Holden
     text( destination, a + 410, b - 40);
     text ( aHours, a +400, b );
     text( ":", a+ 415, b );
-    text(aMins, a + 430, b );
+    if ( aMins < 10)
+    {
+      text("0" + aMins, a + 430, b );
+    }
+    else{
+    text(aMins, a + 430, b ); }
      if (cancelled())  // updated to show differnce if cancelled - Nora Holden 01/04/2026
     {
       text ( "----", a + 560, b - 20);
     }
     else{
-    text(lengthH, a + 550, b - 20);
+      if (lengthM > 9 )
+      {
+         text(lengthH, a + 540, b - 20);
+      }
+      else{
+    text(lengthH, a + 550, b - 20); }
     text( ":", a+ 560, b - 20 );
     if(lengthM < 10) // fixed logic so if the flight is less than ten minutes it appears in the correct form e.g. 10:07 not 10: 7 - Nora Holden 01/04/2026
     {
