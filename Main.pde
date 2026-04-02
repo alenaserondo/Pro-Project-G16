@@ -115,6 +115,7 @@ void setup()
     String origin = row.getString("ORIGIN"); //uses csv header names to find the specific data
     int depTime = row.getInt("DEP_TIME");
     String date = row.getString("FL_DATE");
+    date = date.split(" ")[0]; // Fixed input so the 00:00 was cut out - Alyx Harmon 01/04/2026
     String airline= row.getString("MKT_CARRIER");
     int schDepTime = row.getInt("CRS_DEP_TIME");
     int arrTime = row.getInt("ARR_TIME");
