@@ -3,15 +3,10 @@ import controlP5.*;
 import java.util.*;
 
 // Wrote flight class - China Lynch 10/3/26 2:30pm
-// Created search bar and drop down filter for dates - China
-boolean dropdownOpen = false;
-int selected = -1;
+// Created 2 search bars for dates - China
 ArrayList<Flights> filtered = new ArrayList<Flights>();
 ArrayList<String> flightsDisplay = new ArrayList<String>();   // dropdown display
 ArrayList<Flights> filteredFlights = new ArrayList<Flights>(); // Alyx Harmon
-
-// dropdown pos
-int dx = 550, dy = 180, dw = 200, dh = 30;
 
 String startDateText = "";
 String endDateText = "";
@@ -310,7 +305,7 @@ airlineDDL.hide();
   {
     drawFilterScreen();
     airlineDDL.hide();
-  flightDDL.hide();
+    flightDDL.hide();
   }
 
 
@@ -484,7 +479,7 @@ void mousePressed()
   // searching flight dates - China Lynch
   if (currentScreen == screens.get(3)) {
 
-    // mouse click start search box
+    // start search box typing when mouse clicked 
     if (mouseX > sx && mouseX < sx + sw && mouseY > sy && mouseY < sy + sh) {
       typingStart = true;
       typingEnd = false;
@@ -492,7 +487,7 @@ void mousePressed()
       return;
     }
 
-    // end
+    // start second search box typing 
     if (mouseX > ex && mouseX < ex + sw && mouseY > ey && mouseY < ey + sh) {
       typingEnd = true;
       typingStart = false;
@@ -517,19 +512,6 @@ void mousePressed()
       dropdownOpen = !dropdownOpen;
       return;
     }
-
-    // dropdown selection
-    if (dropdownOpen) {
-      for (int i = 0; i < flightsDisplay.size(); i++) {
-        int iy = dy + dh * (i + 1);
-        if (mouseX > dx && mouseX < dx + dw && mouseY > iy && mouseY < iy + dh) {
-          selected = i;
-          dropdownOpen = false;
-          return;
-        }
-      }
-      dropdownOpen = false;
-    }
   }
 }
 
@@ -541,7 +523,6 @@ void mouseDragged()
 //takes in written input - Nora Holden and China Lynch ( two methods merged )
 void keyPressed() {
 
-
   // when backspace pressed we delete - China Lynch
   if (key == BACKSPACE) {
     if (typingStart && startDateText.length() > 0)
@@ -550,13 +531,12 @@ void keyPressed() {
     if (typingEnd && endDateText.length() > 0)
       endDateText = endDateText.substring(0, endDateText.length() - 1);
 
-
     if (typingAirport && enteredText.length() > 0)
       enteredText = enteredText.substring(0, enteredText.length() - 1);
     return;
   }
 
-  // Only ints allowed and booleans - China Lynch
+  // Only ints allowed and booleans - China Lynch (dates filter)
   if (key >= '0' && key <= '9') {
 
     if (typingStart && startDateText.length() < 8)
@@ -583,8 +563,7 @@ void keyPressed() {
     }
   }
 
-
-  // When both dates are 8 digits → filter - China Lynch
+  // When both dates are 8 digits → start filter - China Lynch
   if (currentScreen == screens.get(3)) {
     if (startDateText.length() == 8 && endDateText.length() == 8) {
       filterFlights();
@@ -618,13 +597,13 @@ void drawSearchBars() {
   noStroke();
 }
 
+// implement flight dates filter - China Lynch
 void drawFilterScreen() {
 
   // search bars
   drawSearchBars();
   filterFlights();
 }
-
 
 
 // Create date range filtering methods - China Lynch 24/03/26 3:30pm
@@ -642,9 +621,6 @@ ArrayList<Flights> listOfDateMatch(int startDate, int endDate)
   return dateMatch;
 }
 
-
-
-
 //China Lynch
 void filterFlights() {
 
@@ -660,10 +636,8 @@ void filterFlights() {
     String label = f.airlineName() + "Departure: " + f.depTime + " " + f.date;
     flightsDisplay.add(label);
   }
-  selected = -1;
-  dropdownOpen = false;
+  
 }
-
 
 
 // filters flights to be printed based on inputted text - Nora Holden 25/03/2026
