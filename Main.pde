@@ -506,13 +506,7 @@ void mousePressed()
     }
   }
 
-  if (currentScreen == screens.get(2)) {
-    // clicking on dropdown box
-    if (mouseX > dx && mouseX < dx + dw && mouseY > dy && mouseY < dy + dh) {
-      dropdownOpen = !dropdownOpen;
-      return;
-    }
-  }
+  
 }
 
 void mouseDragged()
