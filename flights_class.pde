@@ -46,6 +46,7 @@ String flightNum;
   }
   
   // Checks if flight is in range of dates user gives - China Lynch 18/4/26
+  // Date in form YYYYMMDD
   boolean inRange(int start, int end) 
   {
     return (dateInt >= start && dateInt <= end);
