@@ -35,11 +35,11 @@ DropdownList flightDDL;// Alena now
 ArrayList<Flights> filteredAirline = new ArrayList<Flights>();
 ArrayList<String> airlineCodes = new ArrayList<String>(); //Alena now
 
-// alyx
+// creates dropdown list with no selected option - alyx
 ControlP5 cp5;
 DropdownList statusDDL;
 
-int selectedStatus = -1;
+int selectedStatus = -1; 
 
 //data reading - Nora Holden 10/03/2026 2:25pm
 ArrayList<Flights> flights = new ArrayList<Flights>(); //creates an empty arraylist
@@ -316,36 +316,36 @@ airlineDDL.hide();
     airlineDDL.show();
     flightDDL.show();
 
-    filteredFlights.clear();
+    filteredFlights.clear();  //makes sure flight list is empty
 
 
-    for (Flights f : flights)
+    for (Flights f : flights)  //show all avaliable flights(no filter selected yet)
     {
       boolean matches = true;
 
-      if (selectedStatus == 0)
+      if (selectedStatus == 0) //if they filter by 'on time'
       {
-        if (f.depTime != f.schDepTime || f.status == 1)
+        if (f.depTime != f.schDepTime || f.status == 1) 
+        {
+          matches = false; // dont show delayed or cancelled
+        }
+      } else if (selectedStatus == 1) // if filter by 'cancelled'
+      {
+        if (f.status != 1) // only show cancelled
         {
           matches = false;
         }
-      } else if (selectedStatus == 1)
-      {
-        if (f.status != 1)
-        {
-          matches = false;
-        }
-      } else if (selectedStatus == 2)
+      } else if (selectedStatus == 2)  // if filter by delayed
       {
         if (f.depTime <= f.schDepTime || f.status == 1)
         {
-          matches = false;
+          matches = false; // dont show early, on time, or cancelled
         }
       }
 
       if (matches)
       {
-        filteredFlights.add(f);
+        filteredFlights.add(f); // if flight still matches, show to user
       }
     }
   }
@@ -445,7 +445,7 @@ void mousePressed()
   {
     if (b.label.equals("Go to Map"))
       currentScreen = screens.get(1);
-    else if (b.label.equals("Find Flights"))
+    else if (b.label.equals("Find Flights")) 
       currentScreen = screens.get(2);
     else if (b.label.equals("Back to Home"))
       currentScreen = screens.get(0);
@@ -686,6 +686,7 @@ void controlEvent(ControlEvent theEvent) {
   {
     selectedStatus = int(theEvent.getValue());
   }
+// if the user clicks a status, find the value they clicked & start filtering
   
   //Alena 
 if (theEvent.getController().getName().equals("Airlines")) {
