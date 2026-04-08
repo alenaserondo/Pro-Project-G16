@@ -20,7 +20,7 @@ int sx = 60, sy = 180, sw = 200, sh = 30;
 int ex = 300;
 int ey = 180;
 
-//airport filter search box pos - NH
+//airport filter search box pos - Nora Holden
 int ax = 50;
 int ay = 170;
 int aw = 210;
@@ -28,12 +28,12 @@ int ah = 50;
 
 ArrayList<Flights> listToShow;
 
-String selectedFlightNum = ""; //Alena filter
+String selectedFlightNum = ""; //Alena filter - 23.03.26
 HashMap<String, ArrayList<Airline>> flightsByAirline = new HashMap<String, ArrayList<Airline>>();
-DropdownList airlineDDL;// Alena now
-DropdownList flightDDL;// Alena now
+DropdownList airlineDDL;// Alena filter - 23.03.26
+DropdownList flightDDL;// Alena filter - 23.03.26
 ArrayList<Flights> filteredAirline = new ArrayList<Flights>();
-ArrayList<String> airlineCodes = new ArrayList<String>(); //Alena now
+ArrayList<String> airlineCodes = new ArrayList<String>(); // Alena filter - 23.03.26
 
 // creates dropdown list with no selected option - alyx
 ControlP5 cp5;
@@ -251,12 +251,12 @@ void setup()
     flightsByAirline.get(carrier).add(a);
   }
 
-  airlineDDL = cp5.addDropdownList("Airlines") //alena now
+  airlineDDL = cp5.addDropdownList("Airlines") //Alena 26.03.26
     .setPosition(550, 150)
     .setSize(200, 400);
 
 
-  flightDDL = cp5.addDropdownList("Flights") // alena now
+  flightDDL = cp5.addDropdownList("Flights") // Alena 26.03.26
     .setPosition(550, 200)
     .setSize(200, 200);
 
