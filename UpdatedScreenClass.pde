@@ -1,4 +1,4 @@
-// Alyx Harmon - screen & button classes
+// Alyx Harmon - screen & button classes - 10/3
 class Screen
 {
   ArrayList<Button> widgets;
@@ -125,7 +125,7 @@ class FlightScreen extends Screen
   }
 }
 
-class DateFilterScreen extends Screen
+class DateFilterScreen extends Screen - 26/3
 {
   DateFilterScreen(color c)
   {
@@ -155,7 +155,7 @@ class DateFilterScreen extends Screen
 
 
 ////////////////////////////////////////////////////////
-//Alyx
+//Alyx - 10/3
 class Button
 {
   int x,y,w,h;
