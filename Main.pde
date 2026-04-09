@@ -6,7 +6,7 @@ import java.util.*;
 // Created 2 search bars for dates - China
 ArrayList<Flights> filtered = new ArrayList<Flights>();
 ArrayList<String> flightsDisplay = new ArrayList<String>();   // dropdown display
-ArrayList<Flights> filteredFlights = new ArrayList<Flights>(); // Alyx Harmon
+ArrayList<Flights> filteredFlights = new ArrayList<Flights>(); // Alyx Harmon - 25/4
 
 String startDateText = "";
 String endDateText = "";
@@ -35,7 +35,7 @@ DropdownList flightDDL;// Alena filter - 23.03.26
 ArrayList<Flights> filteredAirline = new ArrayList<Flights>();
 ArrayList<String> airlineCodes = new ArrayList<String>(); // Alena filter - 23.03.26
 
-// creates dropdown list with no selected option - alyx
+// creates dropdown list with no selected option - alyx - 25/4
 ControlP5 cp5;
 DropdownList statusDDL;
 
@@ -47,7 +47,7 @@ ArrayList<Flights> airportFilter = new ArrayList<Flights>(); // 25/03/2026 17:25
 ArrayList<Airport> airport = new ArrayList<Airport>();
 ArrayList<Airline> airline = new ArrayList<Airline>();
 Table data;
-//Screens - Alyx Harmon
+//Screens - Alyx Harmon - 10/3
 ArrayList<Screen> screens;
 Screen currentScreen;
 //date
@@ -169,7 +169,7 @@ void setup()
     airline.add(airlines); //adds the object to the arraylist
   }
 
-  //Screens - Alyx Harmon
+  //Screens - Alyx Harmon - 10/3
   // updated 16/03/2026
   // updated & new screen added 26/3
   screens = new ArrayList<Screen>();
@@ -286,7 +286,7 @@ void draw()
 
   statusDDL.hide();
 
-  //Screens - Alyx Harmon
+  //Screens - Alyx Harmon - 10/3
 
   currentScreen.draw();
   if (currentScreen == screens.get(0))
@@ -433,7 +433,7 @@ airlineDDL.hide();
 
 
 /////////////////////////////////////////////////////////////////////MOUSE AND KEY////////////////////////////////////////////////////////
-//Screens - Alyx Harmon
+//Screens - Alyx Harmon - 10/3
 void mousePressed()
 {
   //alena
